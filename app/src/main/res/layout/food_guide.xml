@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="飲食指南"
+            android:id="@+id/textView"
+            android:textSize="50dp"
+            android:textColor="@android:color/black"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="20dp" />
+    </RelativeLayout>
+
+
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:src="@mipmap/food_guide"
+        android:scaleType="centerCrop" />
+
+
+
+</LinearLayout>
