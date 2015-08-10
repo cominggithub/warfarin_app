@@ -1,4 +1,4 @@
-package com.example.coming.warfarin_app;
+package com.warfarin_app;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

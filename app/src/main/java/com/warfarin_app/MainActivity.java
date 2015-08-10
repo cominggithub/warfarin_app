@@ -48,6 +48,11 @@ public class MainActivity extends FragmentActivity {
                 FoodGuideFragment.class,
                 null);
 
+        tabHost.addTab(tabHost.newTabSpec("History")
+                        .setIndicator("History"),
+                HistoryFragment.class,
+                null);
+
         init();
 
         context = this.getApplicationContext();

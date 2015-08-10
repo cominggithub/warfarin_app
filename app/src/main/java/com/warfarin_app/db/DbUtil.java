@@ -7,6 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.warfarin_app.Patient;
+import com.warfarin_app.data.ExamData;
+
+import java.util.ArrayList;
 
 //import android.database.sqlite.SQLiteCursor;
 
@@ -15,14 +18,14 @@ import com.warfarin_app.Patient;
  */
 public class DbUtil {
 
-    private static PatientDbHelper patientDbHelper;
+    private static WarfarinDbHelper patientDbHelper;
     private static Context context;
-    private static PatientDbHelper mDbHelper;
+    private static WarfarinDbHelper mDbHelper;
 
     public static void init(Context context)
     {
 //        this.context = context;
-        mDbHelper = new PatientDbHelper(context);
+        mDbHelper = new WarfarinDbHelper(context);
         if (!checkDb())
         {
             createDb();
@@ -86,8 +89,6 @@ public class DbUtil {
         boolean isMarfarin;
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
-// Define a projection that specifies which columns from the database
-// you will actually use after this query.
         String[] projection = {
                 PatientEntry._ID,
                 PatientEntry.COLUMN_NAME_NAME,
@@ -138,6 +139,81 @@ public class DbUtil {
         patient.setIsWarfarin(cursor.getInt(cursor.getColumnIndexOrThrow(PatientEntry.COLUMN_NAME_IS_WARFARIN)) == 1);
 
         return true;
+    }
+
+    public static void saveExamData(ExamData d)
+    {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        Log.d("app", "save patient");
+
+        ContentValues values = new ContentValues();
+        values.put(ExamEntry.COLUMN_NAME_DATE, d.date);
+        values.put(ExamEntry.COLUMN_NAME_PT, d.pt);
+        values.put(ExamEntry.COLUMN_NAME_INR, d.inr);
+        values.put(ExamEntry.COLUMN_NAME_MARFARIN, d.warfarin);
+
+        Log.d("app", "insert exam data");
+        db.insert(ExamEntry.TABLE_NAME, null, values);
+    }
+
+    public static boolean loadExamHistory(ArrayList<ExamData> list)
+    {
+        int result;
+        boolean gender;
+        boolean isMarfarin;
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        String[] projection = {
+                ExamEntry._ID,
+                ExamEntry.COLUMN_NAME_DATE,
+                ExamEntry.COLUMN_NAME_PT,
+                ExamEntry.COLUMN_NAME_INR,
+                ExamEntry.COLUMN_NAME_MARFARIN
+        };
+
+        String[] where = {
+                ExamEntry._ID,
+        };
+
+
+        String sortOrder =
+                PatientEntry._ID + " ASC";
+
+        Cursor cursor = db.query(
+                ExamEntry.TABLE_NAME,  // The table to query
+                projection,                               // The columns to return
+                null,
+                null,                            // The values for the WHERE clause
+                null,                                     // don't group the rows
+                null,                                     // don't filter by row groups
+                sortOrder                                 // The sort order
+        );
+
+        Log.d("app", "cursor count: " + cursor.getCount());
+
+        if (cursor.getCount() < 1)
+        {
+            return false;
+        }
+
+
+        cursor.moveToFirst();
+
+        for(int i=0; i<cursor.getCount(); i++)
+        {
+            ExamData ed = new ExamData();
+            ed.date = cursor.getLong(cursor.getColumnIndexOrThrow(ExamEntry.COLUMN_NAME_DATE));
+            ed.pt = cursor.getDouble(cursor.getColumnIndexOrThrow(ExamEntry.COLUMN_NAME_PT));
+            ed.pt = cursor.getDouble(cursor.getColumnIndexOrThrow(ExamEntry.COLUMN_NAME_INR));
+            ed.warfarin = cursor.getDouble(cursor.getColumnIndexOrThrow(ExamEntry.COLUMN_NAME_MARFARIN));
+            list.add(ed);
+
+            cursor.moveToNext();
+        }
+
+        return true;
+
     }
 
 }

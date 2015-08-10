@@ -19,12 +19,12 @@ public class PatientEntry implements BaseColumns {
     private static final String COMMA_SEP = ",";
     public static final String SQL_CREATE_ENTRIES =
             "CREATE TABLE " + PatientEntry.TABLE_NAME + " (" +
-                    PatientEntry._ID + " INTEGER PRIMARY KEY," +
-                    PatientEntry.COLUMN_NAME_NAME + TEXT_TYPE + COMMA_SEP +
-                    PatientEntry.COLUMN_NAME_GENDER + INTEGER_TYPE + COMMA_SEP +
-                    PatientEntry.COLUMN_NAME_BIRTHDAY + TEXT_TYPE + COMMA_SEP +
-                    PatientEntry.COLUMN_NAME_IS_WARFARIN + INTEGER_TYPE + COMMA_SEP +
-                    PatientEntry.COLUMN_NAME_DOCTOR + TEXT_TYPE +
+                    _ID + " INTEGER PRIMARY KEY," +
+                    COLUMN_NAME_NAME + TEXT_TYPE + COMMA_SEP +
+                    COLUMN_NAME_GENDER + INTEGER_TYPE + COMMA_SEP +
+                    COLUMN_NAME_BIRTHDAY + TEXT_TYPE + COMMA_SEP +
+                    COLUMN_NAME_IS_WARFARIN + INTEGER_TYPE + COMMA_SEP +
+                    COLUMN_NAME_DOCTOR + TEXT_TYPE +
 
                     " )";
 
