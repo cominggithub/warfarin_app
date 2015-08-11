@@ -4,9 +4,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import com.warfarin_app.data.ExamData;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * Created by Coming on 8/9/15.
@@ -44,29 +41,5 @@ public class WarfarinDbHelper extends SQLiteOpenHelper {
         onUpgrade(db, oldVersion, newVersion);
     }
 
-    public void insertExamHistorySample()
-    {
-        for(int i=0; i<10; i++)
-        {
-            String string_date = "2015/08/10";
-            long milliseconds = 0;
-            ExamData ed = new ExamData();
-            SimpleDateFormat f = new SimpleDateFormat("yyyy/MM/dd");
 
-            try{
-                Date d = f.parse(string_date);
-                milliseconds = d.getTime();
-            }catch (Exception e)
-            {
-
-            }
-
-            ed.date = milliseconds;
-            ed.pt = 1+i*.1;
-            ed.inr = 2+i*.2;
-            ed.warfarin = 2+i*.3;
-
-            DbUtil.saveExamData(ed);
-        }
-    }
 }

@@ -8,8 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import java.util.HashMap;
+
+import com.warfarin_app.data.ExamData;
+import com.warfarin_app.db.DbUtil;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by Coming on 8/10/15.
@@ -38,17 +42,33 @@ public class HistoryFragment extends android.support.v4.app.Fragment
         super.onActivityCreated(savedInstanceState);
         Log.d("app", "onActivityCreated");
 
+        ArrayList<ExamData> data = new ArrayList<ExamData>();
 
-        for(int i=0; i<10; i++){
+        DbUtil.loadExamHistory(data);
+        if (data.size() == 0)
+        {
+            DbUtil.insertExamHistorySample();
+        }
+
+        DbUtil.loadExamHistory(data);
+        for(int i=0; i<data.size(); i++){
             HashMap<String,String> item = new HashMap<String,String>();
-            item.put("date", "date"+i);
-            item.put("time", "time"+i);
-            item.put("inr", ""+i);
+            item.put("date", data.get(i).getDateStr());
+            item.put("time", data.get(i).getTimeStr());
+            item.put("pt", "" + data.get(i).pt);
+            item.put("inr", "" + data.get(i).inr);
+            item.put("warfarin", "" + data.get(i).warfarin);
             examDataList.add( item );
         }
 
-        String[] fields = {"date", "time", "inr"};
-        int[] views = {R.id.exam_list_entry_tvDate, R.id.exam_list_entry_tvTime, R.id.exam_list_entry_tvInr};
+        String[] fields = {"date", "time", "pt", "inr", "warfarin"};
+        int[] views = {
+                R.id.exam_list_entry_tvDate,
+                R.id.exam_list_entry_tvTime,
+                R.id.exam_list_entry_tvPt,
+                R.id.exam_list_entry_tvInr,
+                R.id.exam_list_entry_tvWarfarin
+        };
 
         SimpleAdapter adapter = new SimpleAdapter(
                 getActivity().getBaseContext(),

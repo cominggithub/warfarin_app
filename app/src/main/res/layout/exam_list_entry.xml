@@ -9,34 +9,92 @@
         android:layout_width="fill_parent"
         android:layout_height="26dip"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
         android:ellipsize="marquee"
         android:singleLine="true"
         android:text="HH:mm:ss"
-        android:textSize="12sp" />
+        android:textSize="12sp"
+        android:layout_alignRight="@+id/textView25"
+        android:layout_alignEnd="@+id/textView25" />
 
     <TextView
         android:id="@+id/exam_list_entry_tvDate"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/exam_list_entry_tvTime"
-        android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_alignWithParentIfMissing="true"
         android:gravity="center_vertical"
         android:text="2015/8/1"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:layout_alignRight="@+id/textView25"
+        android:layout_alignEnd="@+id/textView25" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Large Text"
+        android:text="20"
+        android:id="@+id/exam_list_entry_tvPt"
+        android:textSize="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/exam_list_entry_tvTime"
+        android:layout_toEndOf="@+id/exam_list_entry_tvTime" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="pt"
+        android:id="@+id/textView25"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="96dp"
+        android:layout_marginStart="96dp"
+        android:layout_alignTop="@+id/exam_list_entry_tvPt"
+        android:textSize="20dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="INR"
+        android:id="@+id/textView26"
+        android:textSize="20dp"
+        android:layout_alignBottom="@+id/exam_list_entry_tvDate"
+        android:layout_toRightOf="@+id/exam_list_entry_tvPt"
+        android:layout_toEndOf="@+id/exam_list_entry_tvPt" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="30"
         android:id="@+id/exam_list_entry_tvInr"
-        android:layout_centerVertical="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginRight="24dp"
-        android:layout_marginEnd="24dp" />
+        android:layout_alignTop="@+id/textView26"
+        android:layout_toRightOf="@+id/textView26"
+        android:layout_toEndOf="@+id/textView26"
+        android:textSize="40dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Warfarin"
+        android:id="@+id/textView28"
+        android:textSize="20dp"
+        android:layout_alignTop="@+id/exam_list_entry_tvInr"
+        android:layout_toRightOf="@+id/exam_list_entry_tvInr"
+        android:layout_toEndOf="@+id/exam_list_entry_tvInr" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="30"
+        android:id="@+id/exam_list_entry_tvWarfarin"
+        android:textSize="40dp"
+        android:layout_alignTop="@+id/textView28"
+        android:layout_toRightOf="@+id/textView28"
+        android:layout_toEndOf="@+id/textView28" />
 
 </RelativeLayout> 

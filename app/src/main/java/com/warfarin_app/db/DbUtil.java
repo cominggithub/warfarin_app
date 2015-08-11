@@ -9,7 +9,9 @@ import android.util.Log;
 import com.warfarin_app.Patient;
 import com.warfarin_app.data.ExamData;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 //import android.database.sqlite.SQLiteCursor;
 
@@ -216,4 +218,30 @@ public class DbUtil {
 
     }
 
+    public static void insertExamHistorySample()
+    {
+        Log.d("app", "insertExamHistorySample");
+        for(int i=0; i<10; i++)
+        {
+            String string_date = "2015/08/10";
+            long milliseconds = 0;
+            ExamData ed = new ExamData();
+            SimpleDateFormat f = new SimpleDateFormat("yyyy/MM/dd");
+
+            try{
+                Date d = f.parse(string_date);
+                milliseconds = d.getTime();
+            }catch (Exception e)
+            {
+
+            }
+
+            ed.date = milliseconds;
+            ed.pt = 1+i*.1;
+            ed.inr = 2+i*.2;
+            ed.warfarin = 2+i*.3;
+
+            DbUtil.saveExamData(ed);
+        }
+    }
 }
