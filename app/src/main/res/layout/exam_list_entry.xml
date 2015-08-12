@@ -32,26 +32,27 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="20"
-        android:id="@+id/exam_list_entry_tvPt"
-        android:textSize="40dp"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/exam_list_entry_tvTime"
-        android:layout_toEndOf="@+id/exam_list_entry_tvTime" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="pt"
+        android:id="@+id/textView25"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentStart="false"
+        android:textSize="10dp"
+        android:layout_alignTop="@+id/exam_list_entry_tvPt"
+        android:layout_toLeftOf="@+id/exam_list_entry_tvPt"
+        android:layout_marginRight="5dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="pt"
-        android:id="@+id/textView25"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="96dp"
-        android:layout_marginStart="96dp"
-        android:layout_alignTop="@+id/exam_list_entry_tvPt"
-        android:textSize="20dp" />
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="20"
+        android:id="@+id/exam_list_entry_tvPt"
+        android:textSize="20dp"
+        android:layout_alignParentTop="false"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/textView26"
+        android:layout_marginRight="10dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -59,10 +60,10 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="INR"
         android:id="@+id/textView26"
-        android:textSize="20dp"
-        android:layout_alignBottom="@+id/exam_list_entry_tvDate"
-        android:layout_toRightOf="@+id/exam_list_entry_tvPt"
-        android:layout_toEndOf="@+id/exam_list_entry_tvPt" />
+        android:textSize="10dp"
+        android:layout_alignTop="@+id/exam_list_entry_tvInr"
+        android:layout_toLeftOf="@+id/exam_list_entry_tvInr"
+        android:layout_marginRight="5dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -70,10 +71,10 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="30"
         android:id="@+id/exam_list_entry_tvInr"
-        android:layout_alignTop="@+id/textView26"
-        android:layout_toRightOf="@+id/textView26"
-        android:layout_toEndOf="@+id/textView26"
-        android:textSize="40dp" />
+        android:textSize="20dp"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/textView28"
+        android:layout_marginRight="10dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -81,10 +82,10 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Warfarin"
         android:id="@+id/textView28"
-        android:textSize="20dp"
-        android:layout_alignTop="@+id/exam_list_entry_tvInr"
-        android:layout_toRightOf="@+id/exam_list_entry_tvInr"
-        android:layout_toEndOf="@+id/exam_list_entry_tvInr" />
+        android:textSize="10dp"
+        android:layout_toLeftOf="@+id/exam_list_entry_tvWarfarin"
+        android:layout_alignTop="@+id/exam_list_entry_tvWarfarin"
+        android:layout_marginRight="5dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -92,9 +93,9 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="30"
         android:id="@+id/exam_list_entry_tvWarfarin"
-        android:textSize="40dp"
-        android:layout_alignTop="@+id/textView28"
-        android:layout_toRightOf="@+id/textView28"
-        android:layout_toEndOf="@+id/textView28" />
+        android:textSize="20dp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="30dp" />
 
 </RelativeLayout> 

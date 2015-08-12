@@ -55,9 +55,9 @@ public class HistoryFragment extends android.support.v4.app.Fragment
             HashMap<String,String> item = new HashMap<String,String>();
             item.put("date", data.get(i).getDateStr());
             item.put("time", data.get(i).getTimeStr());
-            item.put("pt", "" + data.get(i).pt);
-            item.put("inr", "" + data.get(i).inr);
-            item.put("warfarin", "" + data.get(i).warfarin);
+            item.put("pt", "" + data.get(i).getPtStr());
+            item.put("inr", "" + data.get(i).getInrStr());
+            item.put("warfarin", "" + data.get(i).getWarfarinStr());
             examDataList.add( item );
         }
 
@@ -81,5 +81,8 @@ public class HistoryFragment extends android.support.v4.app.Fragment
 
         listview  = (ListView) this.getView().findViewById(R.id.history_lvExamHistoryList);
         listview.setAdapter(adapter);
+
+        ExamData dd = new ExamData();
+        Log.d("app", dd.getDateStr() + " " + dd.getTimeStr());
     }
 }

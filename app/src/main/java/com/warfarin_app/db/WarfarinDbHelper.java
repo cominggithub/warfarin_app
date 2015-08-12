@@ -17,6 +17,7 @@ public class WarfarinDbHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
     public void onCreate(SQLiteDatabase db) {
+
         Log.d("app", PatientEntry.SQL_CREATE_ENTRIES);
         db.execSQL(PatientEntry.SQL_CREATE_ENTRIES);
         db.execSQL(ExamEntry.SQL_CREATE_ENTRIES);

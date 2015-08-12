@@ -1,10 +1,10 @@
 package com.warfarin_app;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTabHost;
-import android.content.Context;
 
 import com.warfarin_app.db.DbUtil;
 
@@ -19,6 +19,7 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        SysUtil.setContext(getBaseContext());
         setContentView(R.layout.activity_main);
 
 
@@ -34,7 +35,7 @@ public class MainActivity extends FragmentActivity {
                 null);
 
         tabHost.addTab(tabHost.newTabSpec("exam")
-                       .setIndicator("exam"),
+                        .setIndicator("exam"),
                 ExamFragment.class,
                 null);
 

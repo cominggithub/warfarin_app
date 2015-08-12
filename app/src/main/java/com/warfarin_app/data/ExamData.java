@@ -1,5 +1,10 @@
 package com.warfarin_app.data;
 
+import com.warfarin_app.SysUtil;
+
+import java.util.Date;
+import java.text.DateFormat;
+import java.util.Locale;
 /**
  * Created by Coming on 8/9/15.
  */
@@ -9,30 +14,54 @@ public class ExamData {
     public double inr = 0.0;
     public long date = 0;
     public double warfarin = 0.0;
+    private Locale locale;
 
+    public ExamData()
+    {
+        date = new Date().getTime();
+    }
     public String getDateStr()
     {
-        return "" + date;
+
+        DateFormat shortDateFormat =
+                DateFormat.getDateInstance(
+                        DateFormat.SHORT, SysUtil.getLocal());
+
+
+        Date d = new Date();
+        d.setTime(date);
+        return shortDateFormat.format(d);
     }
 
     public String getTimeStr()
     {
-        return "" + date;
+
+        DateFormat shortDateFormat =
+                DateFormat.getTimeInstance(
+                        DateFormat.SHORT, SysUtil.getLocal());
+
+        Date d = new Date();
+        d.setTime(date);
+        return shortDateFormat.format(d);
     }
 
     public String getPtStr()
     {
-        return "" + pt;
+
+        return String.format("%.2f", pt);
+
     }
 
     public String getInrStr()
     {
-        return "" + inr;
+
+        return String.format("%.2f", inr);
     }
 
-    public String getWarfarin()
+    public String getWarfarinStr()
     {
-        return "" + warfarin;
+
+        return String.format("%.2f", warfarin);
     }
 
 
