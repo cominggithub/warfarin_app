@@ -1,6 +1,7 @@
 package com.warfarin_app;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,11 +10,21 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.Legend.LegendForm;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.warfarin_app.data.ExamData;
 import com.warfarin_app.db.DbUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
+//import com.github.mikephil.charting.components.LimitLine.LimitLabelPosition.RIGHT_BOTTOM;
 
 /**
  * Created by Coming on 8/10/15.
@@ -24,7 +35,8 @@ public class HistoryFragment extends android.support.v4.app.Fragment
     ListView listview;
 
     ArrayList<HashMap<String,String>> examDataList = new ArrayList<HashMap<String,String>>();
-
+    LineChart mChart;
+    ArrayList<ExamData> data;
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -42,15 +54,7 @@ public class HistoryFragment extends android.support.v4.app.Fragment
         super.onActivityCreated(savedInstanceState);
         Log.d("app", "onActivityCreated");
 
-        ArrayList<ExamData> data = new ArrayList<ExamData>();
-
-        DbUtil.loadExamHistory(data);
-        if (data.size() == 0)
-        {
-            DbUtil.insertExamHistorySample();
-        }
-
-        DbUtil.loadExamHistory(data);
+        loadExamDataFromDb();
         for(int i=0; i<data.size(); i++){
             HashMap<String,String> item = new HashMap<String,String>();
             item.put("date", data.get(i).getDateStr());
@@ -84,5 +88,234 @@ public class HistoryFragment extends android.support.v4.app.Fragment
 
         ExamData dd = new ExamData();
         Log.d("app", dd.getDateStr() + " " + dd.getTimeStr());
+
+        loadExamChart();
+
     }
+
+    public void loadExamDataFromDb()
+    {
+        data = new ArrayList<ExamData>();
+
+        DbUtil.cleanDb();
+        DbUtil.loadExamHistory(data);
+        if (data.size() == 0)
+        {
+            DbUtil.insertExamHistorySample();
+        }
+
+        DbUtil.loadExamHistory(data);
+    }
+
+    public void loadExamChart()
+    {
+
+        mChart = (LineChart) this.getView().findViewById(R.id.chart);
+        mChart.setDrawGridBackground(false);
+
+        mChart.setDescription("");
+        mChart.setNoDataTextDescription("You need to provide data for the chart.");
+
+//        mChart.setHighlightEnabled(true);
+
+        // x-axis limit line
+//        LimitLine llXAxis = new LimitLine(10f, "Index 10");
+//        llXAxis.setLineWidth(4f);
+//        llXAxis.enableDashedLine(10f, 10f, 0f);
+////        llXAxis.setLabelPosition(LimitLabelPosition.POS_LEFT);
+//        llXAxis.setTextSize(10f);
+
+        XAxis xAxis = mChart.getXAxis();
+//        xAxis.addLimitLine(llXAxis);
+
+//        LimitLine ll1 = new LimitLine(130f, "Upper Limit");
+//        ll1.setLineWidth(4f);
+//        ll1.enableDashedLine(10f, 10f, 0f);
+////        ll1.setLabelPosition(LimitLabelPosition.RIGHT_TOP);
+//        ll1.setTextSize(10f);
+//
+//        LimitLine ll2 = new LimitLine(-30f, "Lower Limit");
+//        ll2.setLineWidth(4f);
+//        ll2.enableDashedLine(10f, 10f, 0f);
+////        ll2.setLabelPosition(LimitLabelPosition.RIGHT_BOTTOM);
+//        ll2.setTextSize(10f);
+
+        YAxis leftAxis = mChart.getAxisLeft();
+        leftAxis.removeAllLimitLines(); // reset all limit lines to avoid overlapping lines
+//        leftAxis.addLimitLine(ll1);
+//        leftAxis.addLimitLine(ll2);
+//        leftAxis.setAxisMaxValue(5f);
+//        leftAxis.setAxisMinValue(0f);
+        leftAxis.setStartAtZero(false);
+        //leftAxis.setYOffset(20f);
+        leftAxis.enableGridDashedLine(10f, 10f, 0f);
+
+        // limit lines are drawn behind data (and not on top)
+//        leftAxis.setDrawLimitLinesBehindData(true);
+
+        mChart.getAxisRight().setEnabled(false);
+
+        // add data
+//        setExamData(45, 100);
+        setExamData();
+//        mChart.setVisibleXRange(20);
+//        mChart.setVisibleYRange(20f, AxisDependency.LEFT);
+//        mChart.centerViewTo(20, 50, AxisDependency.LEFT);
+
+//        mChart.animateX(2500, Easing.EasingOption.EaseInOutQuart);
+//        mChart.invalidate();
+
+        // get the legend (only possible after setting data)
+        Legend l = mChart.getLegend();
+
+        // modify the legend ...
+        // l.setPosition(LegendPosition.LEFT_OF_CHART);
+        l.setForm(LegendForm.LINE);
+
+        // // dont forget to refresh the drawing
+        // mChart.invalidate();
+
+    }
+
+    private void setExamData()
+    {
+        ArrayList<String> xVals = new ArrayList<String>();
+        for (int i = 0; i < data.size(); i++) {
+            xVals.add((i) + data.get(i).getDateStr());
+        }
+
+        // pt
+        ArrayList<Entry> ptVals = new ArrayList<Entry>();
+
+        for (int i = 0; i < data.size(); i++) {
+
+            ptVals.add(new Entry((float)data.get(i).pt, i));
+        }
+
+        // create a dataset and give it a type
+        LineDataSet ptSet = new LineDataSet(ptVals, "PT");
+        // set1.setFillAlpha(110);
+        // set1.setFillColor(Color.RED);
+
+        // set the line to be drawn like this "- - - - - -"
+        ptSet.enableDashedLine(10f, 5f, 0f);
+        ptSet.setColor(Color.GREEN);
+        ptSet.setCircleColor(Color.YELLOW);
+        ptSet.setLineWidth(1f);
+        ptSet.setCircleSize(3f);
+        ptSet.setDrawCircleHole(false);
+        ptSet.setValueTextSize(9f);
+        ptSet.setFillAlpha(65);
+        ptSet.setFillColor(Color.BLACK);
+
+        // inr
+        ArrayList<Entry> inrVals = new ArrayList<Entry>();
+
+        for (int i = 0; i < data.size(); i++) {
+
+            inrVals.add(new Entry((float)data.get(i).inr, i));
+        }
+
+        // create a dataset and give it a type
+        LineDataSet inrSet = new LineDataSet(inrVals, "INR");
+        // set1.setFillAlpha(110);
+        // set1.setFillColor(Color.RED);
+
+        // set the line to be drawn like this "- - - - - -"
+        inrSet.enableDashedLine(10f, 5f, 0f);
+        inrSet.setColor(Color.GREEN);
+        inrSet.setCircleColor(Color.YELLOW);
+        inrSet.setLineWidth(1f);
+        inrSet.setCircleSize(3f);
+        inrSet.setDrawCircleHole(false);
+        inrSet.setValueTextSize(9f);
+        inrSet.setFillAlpha(65);
+        inrSet.setFillColor(Color.BLACK);
+
+        // warfarin
+        ArrayList<Entry> warfarinVals = new ArrayList<Entry>();
+
+        for (int i = 0; i < data.size(); i++) {
+
+            warfarinVals.add(new Entry((float)data.get(i).warfarin, i));
+        }
+
+        // create a dataset and give it a type
+        LineDataSet warfarinSet = new LineDataSet(warfarinVals, "INR");
+        // set1.setFillAlpha(110);
+        // set1.setFillColor(Color.RED);
+
+        // set the line to be drawn like this "- - - - - -"
+        warfarinSet.enableDashedLine(10f, 5f, 0f);
+        warfarinSet.setColor(Color.GREEN);
+        warfarinSet.setCircleColor(Color.RED);
+        warfarinSet.setLineWidth(1f);
+        warfarinSet.setCircleSize(3f);
+        warfarinSet.setDrawCircleHole(false);
+        warfarinSet.setValueTextSize(9f);
+        warfarinSet.setFillAlpha(65);
+        warfarinSet.setFillColor(Color.BLACK);
+
+//        set1.setDrawFilled(true);
+        // set1.setShader(new LinearGradient(0, 0, 0, mChart.getHeight(),
+        // Color.BLACK, Color.WHITE, Shader.TileMode.MIRROR));
+
+        ArrayList<LineDataSet> dataSets = new ArrayList<LineDataSet>();
+        dataSets.add(ptSet); // add the datasets
+        dataSets.add(inrSet); // add the datasets
+        dataSets.add(warfarinSet); // add the datasets
+
+        // create a data object with the datasets
+        LineData data = new LineData(xVals, dataSets);
+
+        // set data
+        mChart.setData(data);
+    }
+    private void setData(int count, float range) {
+
+        ArrayList<String> xVals = new ArrayList<String>();
+        for (int i = 0; i < count; i++) {
+            xVals.add((i) + "");
+        }
+
+        ArrayList<Entry> yVals = new ArrayList<Entry>();
+
+        for (int i = 0; i < count; i++) {
+
+            float mult = (range + 1);
+            float val = (float) (Math.random() * mult) + 3;// + (float)
+            // ((mult *
+            // 0.1) / 10);
+            yVals.add(new Entry(val, i));
+        }
+
+        // create a dataset and give it a type
+        LineDataSet set1 = new LineDataSet(yVals, "PT");
+        // set1.setFillAlpha(110);
+        // set1.setFillColor(Color.RED);
+
+        // set the line to be drawn like this "- - - - - -"
+        set1.enableDashedLine(10f, 5f, 0f);
+        set1.setColor(Color.BLACK);
+        set1.setCircleColor(Color.BLACK);
+        set1.setLineWidth(1f);
+        set1.setCircleSize(3f);
+        set1.setDrawCircleHole(false);
+        set1.setValueTextSize(9f);
+        set1.setFillAlpha(65);
+        set1.setFillColor(Color.BLACK);
+//        set1.setDrawFilled(true);
+        // set1.setShader(new LinearGradient(0, 0, 0, mChart.getHeight(),
+        // Color.BLACK, Color.WHITE, Shader.TileMode.MIRROR));
+
+        ArrayList<LineDataSet> dataSets = new ArrayList<LineDataSet>();
+        dataSets.add(set1); // add the datasets
+
+        // create a data object with the datasets
+        LineData data = new LineData(xVals, dataSets);
+
+        // set data
+        mChart.setData(data);
+    }
+
 }

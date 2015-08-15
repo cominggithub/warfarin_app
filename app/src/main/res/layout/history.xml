@@ -12,22 +12,17 @@
         android:background="#ffafc9ff"
         android:contentDescription="backgroundImage" />
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:id="@+id/scrollView2"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:background="#ffffdb7c">
 
 
-    </ScrollView>
+    <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/chart"
+            android:layout_width="match_parent"
+            android:layout_height="250dp" />
 
-        <ListView
+    <ListView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/history_lvExamHistoryList"
             android:clickable="false"
-            android:layout_below="@+id/scrollView2" />
+            android:layout_below="@+id/chart" />
 </RelativeLayout>

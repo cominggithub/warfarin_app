@@ -244,4 +244,10 @@ public class DbUtil {
             DbUtil.saveExamData(ed);
         }
     }
+
+    public static void cleanDb()
+    {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        db.delete(ExamEntry.TABLE_NAME, null, null);
+    }
 }
