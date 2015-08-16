@@ -72,6 +72,13 @@ public class PatientFragment extends android.support.v4.app.Fragment implements 
         loadPatient();
     }
 
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        savePatient();
+    }
+
     public void onClick(View v)
     {
         if (v == btOK)

@@ -17,7 +17,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="最近一次的檢查結果"
         android:id="@+id/textView"
-        android:layout_marginTop="42dp"
+        android:layout_marginTop="20dp"
         android:textSize="30dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
@@ -26,10 +26,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="日期 : 2015/1/2"
-        android:id="@+id/tvExamDate"
+        android:id="@+id/exam_tvExamDate"
         android:layout_below="@+id/textView"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="33dp"
+        android:layout_marginTop="5dp"
         android:textSize="20dp"
         android:textColor="#ff000000" />
 
@@ -39,11 +39,11 @@
         android:text="PT: "
         android:id="@+id/textView2"
         android:textSize="20dp"
-        android:layout_marginTop="41dp"
         android:textColor="@android:color/black"
-        android:layout_below="@+id/tvExamDate"
-        android:layout_alignLeft="@+id/textView"
-        android:layout_alignStart="@+id/textView" />
+        android:layout_alignTop="@+id/exam_tvPt"
+        android:layout_toLeftOf="@+id/exam_tvPt"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="10dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -52,29 +52,32 @@
         android:id="@+id/textView3"
         android:textSize="20dp"
         android:layout_centerVertical="true"
+        android:textColor="@android:color/black"
         android:layout_alignRight="@+id/textView2"
-        android:layout_alignEnd="@+id/textView2"
-        android:textColor="@android:color/black" />
+        android:layout_alignTop="@+id/exam_tvInr"
+        android:layout_marginTop="20dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="20"
-        android:id="@+id/textView4"
+        android:id="@+id/exam_tvPt"
         android:textSize="40dp"
         android:textColor="@android:color/black"
-        android:layout_alignBottom="@+id/textView2"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp"
+        android:layout_below="@+id/exam_tvExamDate" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="30"
-        android:id="@+id/textView5"
+        android:id="@+id/exam_tvInr"
         android:textSize="60dp"
-        android:layout_below="@+id/textView4"
+        android:layout_below="@+id/exam_tvPt"
         android:layout_centerHorizontal="true"
-        android:textColor="@android:color/black" />
+        android:textColor="@android:color/black"
+        android:layout_marginTop="5dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -82,16 +85,17 @@
         android:text="前一次檢查結果"
         android:id="@+id/textView6"
         android:textSize="30dp"
-        android:layout_below="@+id/textView5"
+        android:layout_below="@+id/exam_tvInr"
         android:layout_centerHorizontal="true"
-        android:textColor="#ff646a6a" />
+        android:textColor="#ff646a6a"
+        android:layout_marginTop="10dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="日期 : 2015/1/2"
-        android:id="@+id/textView7"
-        android:layout_marginTop="32dp"
+        android:id="@+id/exam_lastExamDate"
+        android:layout_marginTop="5dp"
         android:layout_below="@+id/textView6"
         android:layout_centerHorizontal="true"
         android:textColor="#ff646a6a" />
@@ -101,33 +105,38 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="PT:11 INR:50"
-        android:id="@+id/textView8"
-        android:layout_below="@+id/textView7"
-        android:layout_alignLeft="@+id/tvExamDate"
-        android:layout_alignStart="@+id/tvExamDate"
-        android:textColor="#ff646a6a" />
+        android:id="@+id/exam_lastExamResult"
+        android:layout_alignStart="@+id/exam_tvExamDate"
+        android:textColor="#ff646a6a"
+        android:layout_marginTop="5dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/exam_lastExamDate" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="80dp"
+        android:layout_height="50dp"
         android:text="Warfarin 劑量："
         android:id="@+id/textView9"
         android:textSize="20dp"
         android:textColor="@android:color/black"
-        android:layout_alignBottom="@+id/editText"
-        android:layout_toLeftOf="@+id/textView5"
-        android:layout_toStartOf="@+id/textView5" />
+        android:gravity="right"
+        android:layout_toLeftOf="@+id/exam_etWarfarin"
+        android:layout_alignBottom="@+id/exam_etWarfarin"
+        android:layout_marginRight="5dp" />
 
     <EditText
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:inputType="numberDecimal"
-        android:ems="10"
-        android:id="@+id/editText"
-        android:layout_below="@+id/textView8"
-        android:layout_alignLeft="@+id/textView4"
-        android:layout_alignStart="@+id/textView4"
-        android:layout_alignRight="@+id/textView6"
-        android:layout_alignEnd="@+id/textView6" />
+        android:id="@+id/exam_etWarfarin"
+        android:layout_below="@+id/exam_lastExamResult"
+        android:editable="true"
+        android:layout_marginTop="20dp"
+        android:text="0"
+        android:textSize="40dp"
+        android:gravity="center_horizontal"
+        android:layout_alignParentTop="false"
+        android:layout_alignWithParentIfMissing="false"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

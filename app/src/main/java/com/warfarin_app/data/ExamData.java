@@ -10,6 +10,7 @@ import java.util.Locale;
  */
 public class ExamData {
 
+    public long id;
     public double pt = 0.0;
     public double inr = 0.0;
     public long date = 0;
@@ -20,6 +21,7 @@ public class ExamData {
     {
         date = new Date().getTime();
     }
+
     public String getDateStr()
     {
 

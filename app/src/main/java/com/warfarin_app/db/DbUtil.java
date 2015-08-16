@@ -9,9 +9,7 @@ import android.util.Log;
 import com.warfarin_app.Patient;
 import com.warfarin_app.data.ExamData;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 //import android.database.sqlite.SQLiteCursor;
 
@@ -156,15 +154,22 @@ public class DbUtil {
         values.put(ExamEntry.COLUMN_NAME_MARFARIN, d.warfarin);
 
         Log.d("app", "insert exam data");
-        db.insert(ExamEntry.TABLE_NAME, null, values);
+        d.id = db.insert(ExamEntry.TABLE_NAME, null, values);
     }
 
     public static boolean loadExamHistory(ArrayList<ExamData> list)
+    {
+
+        return loadExamHistoryWithLimit(list, -1);
+    }
+
+    public static boolean loadExamHistoryWithLimit(ArrayList<ExamData> list, int limitCount)
     {
         int result;
         boolean gender;
         boolean isMarfarin;
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        Cursor cursor;
 
         String[] projection = {
                 ExamEntry._ID,
@@ -180,17 +185,36 @@ public class DbUtil {
 
 
         String sortOrder =
-                PatientEntry._ID + " ASC";
+                ExamEntry._ID + " DESC";
+        String limit = "limit " + limitCount;
 
-        Cursor cursor = db.query(
-                ExamEntry.TABLE_NAME,  // The table to query
-                projection,                               // The columns to return
-                null,
-                null,                            // The values for the WHERE clause
-                null,                                     // don't group the rows
-                null,                                     // don't filter by row groups
-                sortOrder                                 // The sort order
-        );
+
+        // no limit
+        if (limitCount == -1) {
+            cursor =db.query(
+                    ExamEntry.TABLE_NAME,  // The table to query
+                    projection,                               // The columns to return
+                    null,
+                    null,                                       // The values for the WHERE clause
+                    null,                                     // don't group the rows
+                    null,                                     // don't filter by row groups
+                    sortOrder                                 // The sort order,
+            );
+        }
+        else
+        {
+            cursor =db.query(
+                    ExamEntry.TABLE_NAME,  // The table to query
+                    projection,                               // The columns to return
+                    null,
+                    null,                                       // The values for the WHERE clause
+                    null,                                     // don't group the rows
+                    null,                                     // don't filter by row groups
+                    sortOrder,                                 // The sort order,
+                    limit
+            );
+        }
+
 
         Log.d("app", "cursor count: " + cursor.getCount());
 
@@ -205,6 +229,7 @@ public class DbUtil {
         for(int i=0; i<cursor.getCount(); i++)
         {
             ExamData ed = new ExamData();
+            ed.id = cursor.getLong(cursor.getColumnIndexOrThrow(ExamEntry._ID));
             ed.date = cursor.getLong(cursor.getColumnIndexOrThrow(ExamEntry.COLUMN_NAME_DATE));
             ed.pt = cursor.getDouble(cursor.getColumnIndexOrThrow(ExamEntry.COLUMN_NAME_PT));
             ed.inr = cursor.getDouble(cursor.getColumnIndexOrThrow(ExamEntry.COLUMN_NAME_INR));
@@ -215,31 +240,35 @@ public class DbUtil {
         }
 
         return true;
-
     }
 
+    public static void updateExam(ExamData d)
+    {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        Log.d("app", "save patient");
+
+        ContentValues values = new ContentValues();
+
+        values.put(ExamEntry.COLUMN_NAME_DATE, d.date);
+        values.put(ExamEntry.COLUMN_NAME_PT, d.pt);
+        values.put(ExamEntry.COLUMN_NAME_INR, d.inr);
+        values.put(ExamEntry.COLUMN_NAME_MARFARIN, d.warfarin);
+
+        Log.d("app", "update exam data");
+//        db.insert(ExamEntry.TABLE_NAME, null, values);
+        db.update(ExamEntry.TABLE_NAME, values, ExamEntry._ID + "=" + d.id, null);
+    }
     public static void insertExamHistorySample()
     {
         Log.d("app", "insertExamHistorySample");
         for(int i=0; i<10; i++)
         {
-            String string_date = "2015/08/10";
-            long milliseconds = 0;
             ExamData ed = new ExamData();
-            SimpleDateFormat f = new SimpleDateFormat("yyyy/MM/dd");
 
-            try{
-                Date d = f.parse(string_date);
-                milliseconds = d.getTime();
-            }catch (Exception e)
-            {
-
-            }
-
-            ed.date = milliseconds;
             ed.pt = 1+i*.1;
             ed.inr = 2+i*.2;
-            ed.warfarin = 2+i*.3;
+            ed.warfarin = 3+i*.3;
 
             DbUtil.saveExamData(ed);
         }
