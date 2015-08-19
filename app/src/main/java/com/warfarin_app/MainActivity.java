@@ -14,6 +14,7 @@ public class MainActivity extends FragmentActivity {
     private Patient patient;
     private Context context;
 
+    private ExamDataReceiver examDataReceiver;
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,7 +22,7 @@ public class MainActivity extends FragmentActivity {
 
         SysUtil.setContext(getBaseContext());
         setContentView(R.layout.activity_main);
-
+        examDataReceiver = new ExamDataReceiver();
 
         tabHost = (FragmentTabHost)findViewById(android.R.id.tabhost);
 
@@ -52,6 +53,11 @@ public class MainActivity extends FragmentActivity {
         tabHost.addTab(tabHost.newTabSpec("History")
                         .setIndicator("History"),
                 HistoryFragment.class,
+                null);
+
+        tabHost.addTab(tabHost.newTabSpec("Log")
+                        .setIndicator("Log"),
+                LogFragment.class,
                 null);
 
         init();
@@ -112,6 +118,10 @@ public class MainActivity extends FragmentActivity {
         return "Twitter abc";
     }
 
+    public LogMsgProvider getLogMsgProvider()
+    {
+        return (LogMsgProvider)examDataReceiver;
+    }
     private void init()
     {
         patient = new Patient();
@@ -120,5 +130,15 @@ public class MainActivity extends FragmentActivity {
 
         patient.setName("lod_name");
 
+    }
+
+    public void addExamDataListener(ExamDataListener listener)
+    {
+        examDataReceiver.addExamDataListener(listener);
+    }
+
+    public void addLogMsgConsumer(LogMsgConsumer c)
+    {
+        examDataReceiver.addLogMsgConsumer(c);
     }
 }

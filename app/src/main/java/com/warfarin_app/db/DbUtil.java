@@ -186,7 +186,7 @@ public class DbUtil {
 
         String sortOrder =
                 ExamEntry._ID + " DESC";
-        String limit = "limit " + limitCount;
+        String limit = "" + limitCount;
 
 
         // no limit
@@ -213,6 +213,16 @@ public class DbUtil {
                     sortOrder,                                 // The sort order,
                     limit
             );
+
+//            cursor =db.query(
+//                    ExamEntry.TABLE_NAME,  // The table to query
+//                    projection,                               // The columns to return
+//                    null,
+//                    null,                                       // The values for the WHERE clause
+//                    null,                                     // don't group the rows
+//                    null,                                     // don't filter by row groups
+//                    sortOrder                                 // The sort order,
+//            );
         }
 
 
