@@ -5,9 +5,9 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTabHost;
+import android.util.Log;
 
 import com.warfarin_app.db.DbUtil;
-
 
 public class MainActivity extends FragmentActivity {
     private FragmentTabHost tabHost;
@@ -15,6 +15,7 @@ public class MainActivity extends FragmentActivity {
     private Context context;
 
     private ExamDataReceiver examDataReceiver;
+    private HealthDashboardFragment healthDashboardFragment;
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,6 +119,10 @@ public class MainActivity extends FragmentActivity {
         return "Twitter abc";
     }
 
+    public void setHealthDashboardFragment(HealthDashboardFragment h)
+    {
+        healthDashboardFragment = h;
+    }
     public LogMsgProvider getLogMsgProvider()
     {
         return (LogMsgProvider)examDataReceiver;
@@ -141,4 +146,20 @@ public class MainActivity extends FragmentActivity {
     {
         examDataReceiver.addLogMsgConsumer(c);
     }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        // TODO Auto-generated method stub
+
+        super.onWindowFocusChanged(hasFocus);
+        if (healthDashboardFragment != null)
+        {
+            Log.d("app", "WwWWwWWWwwwww");
+            healthDashboardFragment.dumpPosition();
+        }
+
+
+    }
+
+
 }
