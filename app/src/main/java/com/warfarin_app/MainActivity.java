@@ -8,14 +8,18 @@ import android.support.v4.app.FragmentTabHost;
 import android.util.Log;
 
 import com.warfarin_app.db.DbUtil;
+import com.warfarin_app.transfer.BTManager;
+import com.warfarin_app.transfer.ExamDataListener;
 
 public class MainActivity extends FragmentActivity {
     private FragmentTabHost tabHost;
     private Patient patient;
     private Context context;
 
-    private ExamDataReceiver examDataReceiver;
+
     private HealthDashboardFragment healthDashboardFragment;
+    private BTManager btManager;
+
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,7 +27,6 @@ public class MainActivity extends FragmentActivity {
 
         SysUtil.setContext(getBaseContext());
         setContentView(R.layout.activity_main);
-        examDataReceiver = new ExamDataReceiver();
 
         tabHost = (FragmentTabHost)findViewById(android.R.id.tabhost);
 
@@ -66,38 +69,8 @@ public class MainActivity extends FragmentActivity {
         context = this.getApplicationContext();
 
         DbUtil.init(context);
-//        tabHost.addTab(tabHost.newTabSpec("PatientFragment")
-//                        .setIndicator("PatientFragment"),
-//                null,
-//                null);
-
-//        tabHost.addTab(tabHost.newTabSpec("PatientFragment")
-//                        .setIndicator("PatientFragment"),
-//                PatientFragment.class,
-//                null);
-
-//        tabHost.addTab(tabHost.newTabSpec("aaa")
-//                        .setIndicator("AAA"));
-
-
-//        tabHost.addTab(tabHost.newTabSpec("Profile2")
-//                        .setIndicator("PersonalProfile2"),
-//                PatientFragment.class,
-//                null);
-//
-//        tabHost.addTab(tabHost.newTabSpec("Profile3")
-//                .setIndicator("PersonalProfile3"),
-//                        PatientFragment.class,
-//                        null);
-
-
-//        FragmentTabHost mTabHost;
-//        mTabHost = (FragmentTabHost)findViewById(android.R.id.tabhost);
-//        mTabHost.setup(HomeActivity.this, getSupportFragmentManager(), android.R.id.tabcontent);
-//
-//        mTabHost.addTab(mTabHost.newTabSpec("home").setIndicator("Home"), HomeFragment.class, null);
-//        mTabHost.addTab(mTabHost.newTabSpec("mysheets").setIndicator("MySheets"));
-//        mTabHost.addTab(mTabHost.newTabSpec("bookmarks").setIndicator("Bookmarks"));
+        btManager = new BTManager();
+        btManager.start();
 
     }
 
@@ -123,10 +96,12 @@ public class MainActivity extends FragmentActivity {
     {
         healthDashboardFragment = h;
     }
+
     public LogMsgProvider getLogMsgProvider()
     {
-        return (LogMsgProvider)examDataReceiver;
+        return (LogMsgProvider)btManager.getLogMsgProvider();
     }
+
     private void init()
     {
         patient = new Patient();
@@ -139,12 +114,12 @@ public class MainActivity extends FragmentActivity {
 
     public void addExamDataListener(ExamDataListener listener)
     {
-        examDataReceiver.addExamDataListener(listener);
+        btManager.addExamDataListener(listener);
     }
 
     public void addLogMsgConsumer(LogMsgConsumer c)
     {
-        examDataReceiver.addLogMsgConsumer(c);
+        btManager.addLogMsgConsumer(c);
     }
 
     @Override
@@ -160,6 +135,8 @@ public class MainActivity extends FragmentActivity {
 
 
     }
+
+
 
 
 }

@@ -1,9 +1,11 @@
-package com.warfarin_app;
+package com.warfarin_app.transfer;
 
 /**
  * Created by Coming on 8/19/15.
  */
 
+import com.warfarin_app.LogMsgConsumer;
+import com.warfarin_app.LogMsgProvider;
 import com.warfarin_app.data.ExamData;
 
 import java.util.ArrayList;
@@ -47,9 +49,35 @@ public class ExamDataReceiver implements LogMsgProvider {
         }
     }
 
-    private void appendMsg(String s)
+    public void appendMsg(String s)
     {
         logMsg += logMsg + "\n" + s;
+        notifyAppendMsg(s);
+    }
+
+
+    public void logBTPaired()
+    {
+        appendMsg("paired");
+    }
+
+    public void logCRCError()
+    {
+        appendMsg("crc error");
+    }
+
+    public void logRecvBytes(byte data[])
+    {
+        StringBuilder sb;
+        sb = new StringBuilder();
+        for (byte b : data)
+        {
+            sb.append(String.format("%d ", b));
+        }
+    }
+    public void logExamData(ExamData d)
+    {
+
     }
 
     @Override

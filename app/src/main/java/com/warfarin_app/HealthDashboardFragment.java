@@ -29,7 +29,9 @@ public class HealthDashboardFragment extends android.support.v4.app.Fragment {
     ImageView lowImage;
     ImageView highImage;
     ImageView normalImage;
-    ImageView indicatorImage;
+    ImageView lowIndicatorImage;
+    ImageView normalIndicatorImage;
+    ImageView highIndicatorImage;
     RelativeLayout mainLayout;
 
 
@@ -73,7 +75,10 @@ public class HealthDashboardFragment extends android.support.v4.app.Fragment {
         lowImage = (ImageView) this.getView().findViewById(R.id.healthDashboard_ivLow);
         highImage = (ImageView) this.getView().findViewById(R.id.healthDashboard_ivHigh);
         normalImage = (ImageView) this.getView().findViewById(R.id.healthDashboard_ivNormal);
-        indicatorImage = (ImageView) this.getView().findViewById(R.id.healthDashboard_ivIndicator);
+        lowIndicatorImage = (ImageView) this.getView().findViewById(R.id.healthDashboard_ivIndicatorLow);
+        normalIndicatorImage = (ImageView) this.getView().findViewById(R.id.healthDashboard_ivIndicatorNormal);
+        highIndicatorImage = (ImageView) this.getView().findViewById(R.id.healthDashboard_ivIndicatorHigh);
+
 
         normalMargin = new Margin();
 
@@ -94,33 +99,44 @@ public class HealthDashboardFragment extends android.support.v4.app.Fragment {
 //        dumpPosition();
     }
 
-    public void setIndicatorNormal()
-    {
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)indicatorImage.getLayoutParams();
-        params.setMargins(
-                normalMargin.left,
-                normalMargin.top,
-                normalMargin.right,
-                normalMargin.bottom
-        ); //substitute parameters for left, top, right, bottom
-    }
-
     public void setIndicatorLow()
     {
-
+        lowIndicatorImage.setVisibility(View.VISIBLE);
+        normalIndicatorImage.setVisibility(View.INVISIBLE);
+        highIndicatorImage.setVisibility(View.INVISIBLE);
     }
+
+    public void setIndicatorNormal()
+    {
+//        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)indicatorImage.getLayoutParams();
+//        params.setMargins(
+//                normalMargin.left,
+//                normalMargin.top,
+//                normalMargin.right,
+//                normalMargin.bottom
+//        ); //substitute parameters for left, top, right, bottom
+
+        lowIndicatorImage.setVisibility(View.INVISIBLE);
+        normalIndicatorImage.setVisibility(View.VISIBLE);
+        highIndicatorImage.setVisibility(View.INVISIBLE);
+    }
+
+
 
     public void setIndicatorHigh()
     {
-
+        lowIndicatorImage.setVisibility(View.INVISIBLE);
+        normalIndicatorImage.setVisibility(View.INVISIBLE
+        );
+        highIndicatorImage.setVisibility(View.VISIBLE);
     }
 
     public void updateMargin()
     {
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)indicatorImage.getLayoutParams();
-        params.setMargins(0, 0, 10, 0); //substitute parameters for left, top, right, bottom
-
-        indicatorImage.setLayoutParams(params);
+//        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)indicatorImage.getLayoutParams();
+//        params.setMargins(0, 0, 10, 0); //substitute parameters for left, top, right, bottom
+//
+//        indicatorImage.setLayoutParams(params);
     }
 
     public void loadExamDataToUI()
@@ -152,7 +168,7 @@ public class HealthDashboardFragment extends android.support.v4.app.Fragment {
         dumpViewPosition("lowImage", lowImage);
         dumpViewPosition("highImage", highImage);
         dumpViewPosition("normalImage", normalImage);
-        dumpViewPosition("indicatorImage", indicatorImage);
+
     }
 
 

@@ -151,7 +151,7 @@
     <ImageView
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:id="@+id/healthDashboard_ivIndicator"
+        android:id="@+id/healthDashboard_ivIndicatorNormal"
         android:src="@mipmap/downward_arrow_red"
         android:layout_above="@+id/healthDashboard_ivNormal"
         android:layout_centerHorizontal="true" />
@@ -166,5 +166,23 @@
         android:textStyle="bold"
         android:textSize="30dp"
         android:layout_marginTop="10dp" />
+
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/healthDashboard_ivIndicatorLow"
+        android:src="@mipmap/downward_arrow_red"
+        android:layout_above="@+id/healthDashboard_ivLow"
+        android:layout_alignRight="@+id/textView15"
+        android:layout_alignEnd="@+id/textView15" />
+
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/healthDashboard_ivIndicatorHigh"
+        android:src="@mipmap/downward_arrow_red"
+        android:layout_above="@+id/healthDashboard_ivHigh"
+        android:layout_alignLeft="@+id/textView17"
+        android:layout_alignStart="@+id/textView17" />
 
 </RelativeLayout>

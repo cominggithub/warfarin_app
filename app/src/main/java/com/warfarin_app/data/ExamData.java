@@ -66,5 +66,11 @@ public class ExamData {
         return String.format("%.2f", warfarin);
     }
 
+    public static ExamData parseBytes(byte[] bytes)
+    {
+
+        return null;
+    }
+
 
 }
