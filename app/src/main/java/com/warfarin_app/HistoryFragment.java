@@ -20,6 +20,7 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.warfarin_app.data.ExamData;
 import com.warfarin_app.db.DbUtil;
+import com.warfarin_app.transfer.ExamDataListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,7 +30,7 @@ import java.util.HashMap;
 /**
  * Created by Coming on 8/10/15.
  */
-public class HistoryFragment extends android.support.v4.app.Fragment
+public class HistoryFragment extends android.support.v4.app.Fragment implements ExamDataListener
 {
 
     ListView listview;
@@ -37,11 +38,13 @@ public class HistoryFragment extends android.support.v4.app.Fragment
     ArrayList<HashMap<String,String>> examDataList = new ArrayList<HashMap<String,String>>();
     LineChart mChart;
     ArrayList<ExamData> data;
+    MainActivity mainActivity;
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-        MainActivity mainActivity = (MainActivity)activity;
+        mainActivity = (MainActivity)activity;
+        mainActivity.addExamDataListener(this);
     }
 
     @Override
@@ -52,9 +55,22 @@ public class HistoryFragment extends android.support.v4.app.Fragment
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        listview  = (ListView) this.getView().findViewById(R.id.history_lvExamHistoryList);
         Log.d("app", "onActivityCreated");
+        initChart();
+        refresh();
+    }
 
+    public void refresh()
+    {
         loadExamDataFromDb();
+        loadExamDataToListView();
+        refreshChartData();
+    }
+
+    public void loadExamDataToListView()
+    {
+        examDataList.clear();
         for(int i=0; i<data.size(); i++){
             HashMap<String,String> item = new HashMap<String,String>();
             item.put("date", data.get(i).getDateStr());
@@ -82,39 +98,34 @@ public class HistoryFragment extends android.support.v4.app.Fragment
                 views
         );
 
+        Log.d("app", "exam data list size: " + examDataList.size());
 
-        listview  = (ListView) this.getView().findViewById(R.id.history_lvExamHistoryList);
+
+        listview.setAdapter(null);
         listview.setAdapter(adapter);
-
-        ExamData dd = new ExamData();
-        Log.d("app", dd.getDateStr() + " " + dd.getTimeStr());
-
-        loadExamChart();
-
     }
 
     public void loadExamDataFromDb()
     {
         data = new ArrayList<ExamData>();
 
-        DbUtil.cleanDb();
+//        DbUtil.cleanDb();
         DbUtil.loadExamHistory(data);
-        if (data.size() == 0)
-        {
-            DbUtil.insertExamHistorySample();
-        }
-
-        DbUtil.loadExamHistory(data);
+//        if (data.size() == 0)
+//        {
+//            DbUtil.insertExamHistorySample();
+//            DbUtil.loadExamHistory(data);
+//        }
     }
 
-    public void loadExamChart()
+    public void initChart()
     {
 
         mChart = (LineChart) this.getView().findViewById(R.id.chart);
         mChart.setDrawGridBackground(false);
 
         mChart.setDescription("");
-        mChart.setNoDataTextDescription("You need to provide data for the chart.");
+        mChart.setNoDataTextDescription("No Data");
 
 //        mChart.setHighlightEnabled(true);
 
@@ -157,7 +168,7 @@ public class HistoryFragment extends android.support.v4.app.Fragment
 
         // add data
 //        setExamData(45, 100);
-        setExamData();
+
 //        mChart.setVisibleXRange(20);
 //        mChart.setVisibleYRange(20f, AxisDependency.LEFT);
 //        mChart.centerViewTo(20, 50, AxisDependency.LEFT);
@@ -175,21 +186,24 @@ public class HistoryFragment extends android.support.v4.app.Fragment
         // // dont forget to refresh the drawing
         // mChart.invalidate();
 
+        refreshChartData();
     }
 
-    private void setExamData()
+    private void refreshChartData()
     {
         ArrayList<String> xVals = new ArrayList<String>();
+        if (data == null)
+            return;
         for (int i = 0; i < data.size(); i++) {
-            xVals.add((i) + data.get(i).getDateStr());
+//        for (int i = data.size()-1; i >= 0; i--) {
+            xVals.add(data.get(i).getDateStr());
         }
 
         // pt
         ArrayList<Entry> ptVals = new ArrayList<Entry>();
 
         for (int i = 0; i < data.size(); i++) {
-
-            ptVals.add(new Entry((float)data.get(i).pt, i));
+            ptVals.add(new Entry((float)data.get(i).pt, data.size() - i-1));
         }
 
         // create a dataset and give it a type
@@ -213,7 +227,7 @@ public class HistoryFragment extends android.support.v4.app.Fragment
 
         for (int i = 0; i < data.size(); i++) {
 
-            inrVals.add(new Entry((float)data.get(i).inr, i));
+            inrVals.add(new Entry((float)data.get(i).inr, data.size() - i-1));
         }
 
         // create a dataset and give it a type
@@ -237,7 +251,7 @@ public class HistoryFragment extends android.support.v4.app.Fragment
 
         for (int i = 0; i < data.size(); i++) {
 
-            warfarinVals.add(new Entry((float)data.get(i).warfarin, i));
+            warfarinVals.add(new Entry((float)data.get(i).warfarin, data.size() - i-1));
         }
 
         // create a dataset and give it a type
@@ -270,6 +284,14 @@ public class HistoryFragment extends android.support.v4.app.Fragment
 
         // set data
         mChart.setData(data);
+
+        mChart.invalidate();
+
+    }
+
+    private void setExamData()
+    {
+
     }
     private void setData(int count, float range) {
 
@@ -318,4 +340,17 @@ public class HistoryFragment extends android.support.v4.app.Fragment
         mChart.setData(data);
     }
 
+    @Override
+    public void onExamDataReceived(ExamData d) {
+
+
+        mainActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                refresh();
+
+            }
+        });
+    }
 }

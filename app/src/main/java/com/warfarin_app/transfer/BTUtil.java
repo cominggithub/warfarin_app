@@ -30,7 +30,7 @@ public class BTUtil {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 // Add the name and address to an array adapter to show in a ListView
 //                mArrayAdapter.add(device.getName() + "\n" + device.getAddress());
-                Log.d("app", device.getName() + "\n" + device.getAddress());
+                Log.d("bt", device.getName() + "\n" + device.getAddress());
             }
         }
     };
@@ -43,6 +43,7 @@ public class BTUtil {
     {
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
+        Log.d("bt", "scan device");
         requestBluetoothPermission();
 
         Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
@@ -50,12 +51,16 @@ public class BTUtil {
         if (pairedDevices.size() > 0) {
             // Loop through paired devices
             for (BluetoothDevice device : pairedDevices) {
-                Log.d("app", device.getName() + ": " + device.getAddress());
+                Log.d("bt", device.getName() + ": " + device.getAddress());
                 if (device.getName().equals(name))
                 {
                     return device;
                 }
             }
+        }
+        else
+        {
+            Log.d("bt", "no device found");
         }
 
         return null;
@@ -67,12 +72,12 @@ public class BTUtil {
 
 
         if (mBluetoothAdapter == null) {
-            Log.d("CC", "this device doesn't support bluetooth");
+            Log.d("bt", "this device doesn't support bluetooth");
             // Device does not support Bluetooth
         }
 
         if (!mBluetoothAdapter.isEnabled()) {
-            Log.d("CC", "bluetooth is not enabled");
+            Log.d("bt", "bluetooth is not enabled");
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             mainActivity.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
 

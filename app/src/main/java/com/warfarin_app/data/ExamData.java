@@ -1,10 +1,15 @@
 package com.warfarin_app.data;
 
+import android.util.Log;
+
 import com.warfarin_app.SysUtil;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.text.DateFormat;
 import java.util.Locale;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 /**
  * Created by Coming on 8/9/15.
  */
@@ -68,9 +73,41 @@ public class ExamData {
 
     public static ExamData parseBytes(byte[] bytes)
     {
+        byte[] fbytes;
+        float fv1;
 
-        return null;
+        ExamData d;
+
+
+
+        fv1 = 1;
+        fbytes = ByteBuffer.allocate(4).putFloat(fv1).array();
+
+        d       = new ExamData();
+//        d.pt    = ByteBuffer.wrap(Arrays.copyOfRange(bytes, 2, 5)).order(ByteOrder.LITTLE_ENDIAN).getFloat();
+//        d.inr   = ByteBuffer.wrap(Arrays.copyOfRange(bytes, 6, 10)).order(ByteOrder.LITTLE_ENDIAN).getFloat();
+
+        try {
+            fbytes = Arrays.copyOfRange(bytes, 2, 6);
+
+            d.pt = ByteBuffer.wrap(fbytes).order(ByteOrder.LITTLE_ENDIAN).getFloat();
+//            Log.d("app", String.format("%f (%X-%X-%X-%X)", d.pt, fbytes[0], fbytes[1], fbytes[2], fbytes[3]));
+
+            fbytes = Arrays.copyOfRange(bytes, 6, 10);
+            d.inr = ByteBuffer.wrap(fbytes).order(ByteOrder.LITTLE_ENDIAN).getFloat();
+//            Log.d("app", String.format("%f (%X-%X-%X-%X)", d.inr, fbytes[0], fbytes[1], fbytes[2], fbytes[3]));
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            Log.e("app", e.getStackTrace().toString());
+        }
+
+        return d;
     }
 
-
+    @Override
+    public String toString()
+    {
+        return String.format("ExamData: pt: %f, inr: %f", pt, inr);
+    }
 }

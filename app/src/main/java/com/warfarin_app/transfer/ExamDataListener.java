@@ -6,5 +6,5 @@ package com.warfarin_app.transfer;
 import com.warfarin_app.data.ExamData;
 public interface ExamDataListener {
 
-    public void onExamDataReceived(ExamData d);
+    void onExamDataReceived(ExamData d);
 }

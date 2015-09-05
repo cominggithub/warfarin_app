@@ -21,11 +21,13 @@ public class WaitingOkState implements TransferState {
     @Override
     public String action()
     {
-        byte[] buffer = new byte[128];
+        byte[] buffer = new byte[2];
         try
         {
-            SocketTransceiver.read(mmSocket.getInputStream(), buffer);
+            SocketTransceiver.read(mmSocket.getInputStream(), buffer, 2);
             receivedString = new String(buffer);
+
+
         }catch (IOException e)
         {
 

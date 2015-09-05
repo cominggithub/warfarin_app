@@ -6,6 +6,7 @@ package com.warfarin_app.transfer;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.util.Log;
 
 import com.warfarin_app.LogMsgConsumer;
 import com.warfarin_app.LogMsgProvider;
@@ -19,10 +20,17 @@ public class BTManager extends Thread {
     private static DataReadSignal dataReadSignal = new DataReadSignal();
     private static BTConnectionHandler btConnectionHandler;
     private static ExamData data;
+
+    public BTManager()
+    {
+        examDataReceiver = new ExamDataReceiver();
+    }
     public void run() {
+        Log.d("bt", "bt manager start");
 
         while(alive)
         {
+
             if (!isBtHandlerStarted())
             {
                 startBtHandler();
@@ -39,10 +47,12 @@ public class BTManager extends Thread {
 
     public void startBtHandler()
     {
+        Log.d("bt", "startBtHandler");
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         pairBTDevice();
 
         btConnectionHandler = new BTConnectionHandler(device, mBluetoothAdapter);
+        btConnectionHandler.setDataReadSignal(dataReadSignal);
         btConnectionHandler.start();
     }
 
@@ -60,6 +70,7 @@ public class BTManager extends Thread {
     }
     public boolean pairBTDevice()
     {
+        Log.d("bt", "pair BT Device");
         if (device == null)
         {
             device = BTUtil.scan_device(BLUETEH);
@@ -76,11 +87,22 @@ public class BTManager extends Thread {
     public ExamData recvExamData()
     {
 
-        if (dataReadSignal.hasDataToProcess)
+        synchronized (dataReadSignal)
         {
-            return btConnectionHandler.getExamData();
-        }
+            try
+            {
+                dataReadSignal.wait();
+                if (dataReadSignal.hasDataToProcess) {
+                    dataReadSignal.setHasDataToProcess(false);
+                    return btConnectionHandler.getExamData();
+                }
+            }
+            catch (Exception e)
+            {
+                Log.e("bt", "exception", e);
+            }
 
+        }
         return null;
     }
 

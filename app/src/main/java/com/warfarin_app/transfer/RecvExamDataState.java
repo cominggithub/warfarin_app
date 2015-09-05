@@ -25,9 +25,9 @@ public class RecvExamDataState implements TransferState {
         byte[] buffer = new byte[128];
         try
         {
-            SocketTransceiver.read(mmSocket.getInputStream(), buffer);
+            SocketTransceiver.read(mmSocket.getInputStream(), buffer, 12);
             data = ExamData.parseBytes(buffer);
-            receivedString = "ExamData";
+            receivedString = "";
         }catch (IOException e)
         {
 

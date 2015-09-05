@@ -35,7 +35,7 @@ public class BTConnection extends Thread {
         byte[] buffer = new byte[1024];  // buffer store for the stream
         int bytes; // bytes returned from read()
 
-        Log.d("CC", "Start to Send data");
+        Log.d("app", "Start to Send data");
         // Keep listening to the InputStream until an exception occurs
 //        while (true) {
         try {
@@ -51,12 +51,12 @@ public class BTConnection extends Thread {
                 write(sendb);
 
 //                    Log.d("CC", "send: " + msg);
-                Log.d("CC", "send: " + sendb[0]);
+                Log.d("app", "send: " + sendb[0]);
                 bytes = mmInStream.read(buffer);
 
 //                    recv = String.valueOf(buffer);
 //                    Log.d("CC", "recv: " + recv);
-                Log.d("CC", "recv: " + buffer[0]);
+                Log.d("app", "recv: " + buffer[0]);
             }
             mmSocket.close();
 

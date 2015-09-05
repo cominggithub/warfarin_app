@@ -21,6 +21,7 @@ public class BTConnectionHandler extends Thread {
     private ExamData data;
     BluetoothAdapter mBluetoothAdapter;
     private TransferContext transferContext;
+    private byte[] bufferredData;
 
     //    private BluetoothAdapter mBluetoothAdapter;
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
@@ -30,7 +31,7 @@ public class BTConnectionHandler extends Thread {
         // Use a temporary object that is later assigned to mmSocket,
         // because mmSocket is final
 
-        Log.d("app", "connect");
+        Log.d("bt", "connect");
         BluetoothSocket tmp = null;
         mmDevice = device;
         mBluetoothAdapter = bleAdapter;
@@ -40,8 +41,9 @@ public class BTConnectionHandler extends Thread {
         try {
             // MY_UUID is the app's UUID string, also used by the server code
             tmp = device.createRfcommSocketToServiceRecord(MY_UUID);
+//            tmp = device.createRfcommSocketToServiceRecord(null);
         } catch (IOException e) {
-            Log.d("CC", e.toString());
+            Log.d("bt", e.toString());
             stopRunning();
 
         }
@@ -57,7 +59,7 @@ public class BTConnectionHandler extends Thread {
         // Cancel discovery because it will slow down the connection
         mBluetoothAdapter.cancelDiscovery();
 
-        Log.d("app", "start connect");
+        Log.d("bt", "start connect");
         try {
             // Connect the device through the socket. This will block
             // until it succeeds or throws an exception
@@ -65,27 +67,33 @@ public class BTConnectionHandler extends Thread {
 
             DataReceiver receiver = new DataReceiver(mmSocket);
 
-            while (isRunning)
-            {
+
+            while (isRunning) {
                 data = receiver.getExamData();
                 if (data != null)
                 {
+                    Log.d("bt", data.toString());
                     dataReadSignal.setHasDataToProcess(true);
-                }
+                    synchronized (dataReadSignal)
+                    {
+                        try
+                        {
+                            dataReadSignal.notify();
+                        }catch (Exception e)
+                        {
+                            Log.e("bt", "exception", e);
+                        }
+                    }
 
-                if (!mmSocket.isConnected())
-                {
-                    stopRunning();
                 }
             }
 
 
-        } catch (Exception exception) {
+        } catch (Exception e) {
             // Unable to connect; close the socket and get out
-            Log.d("app", exception.toString());
-
-
+            Log.e("bt", "exception", e);
         }
+
 
         stopRunning();
         return;
@@ -104,6 +112,7 @@ public class BTConnectionHandler extends Thread {
     public void stopRunning()
     {
         isRunning = false;
+        Log.d("bt", "stop BT Manager");
         if (dataReadSignal != null)
         {
             dataReadSignal.setHasDataToProcess(true);
@@ -114,10 +123,12 @@ public class BTConnectionHandler extends Thread {
                 mmSocket.close();
             } catch (IOException closeException) {
 
-                Log.d("app", closeException.toString());
+                Log.d("bt", closeException.toString());
 
             }
         }
 
     }
+
+
 }

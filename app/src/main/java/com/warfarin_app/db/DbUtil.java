@@ -145,7 +145,7 @@ public class DbUtil {
     {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
-        Log.d("app", "save patient");
+        Log.d("app", "save exam data: " + d.toString());
 
         ContentValues values = new ContentValues();
         values.put(ExamEntry.COLUMN_NAME_DATE, d.date);
@@ -153,7 +153,6 @@ public class DbUtil {
         values.put(ExamEntry.COLUMN_NAME_INR, d.inr);
         values.put(ExamEntry.COLUMN_NAME_MARFARIN, d.warfarin);
 
-        Log.d("app", "insert exam data");
         d.id = db.insert(ExamEntry.TABLE_NAME, null, values);
     }
 
@@ -256,7 +255,7 @@ public class DbUtil {
     {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
-        Log.d("app", "save patient");
+        Log.d("app", "update Exam Data: " + d.toString());
 
         ContentValues values = new ContentValues();
 
@@ -265,7 +264,7 @@ public class DbUtil {
         values.put(ExamEntry.COLUMN_NAME_INR, d.inr);
         values.put(ExamEntry.COLUMN_NAME_MARFARIN, d.warfarin);
 
-        Log.d("app", "update exam data");
+
 //        db.insert(ExamEntry.TABLE_NAME, null, values);
         db.update(ExamEntry.TABLE_NAME, values, ExamEntry._ID + "=" + d.id, null);
     }

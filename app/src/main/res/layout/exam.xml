@@ -94,7 +94,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="日期 : 2015/1/2"
-        android:id="@+id/exam_lastExamDate"
+        android:id="@+id/exam_tvLastExamDate"
         android:layout_marginTop="5dp"
         android:layout_below="@+id/textView6"
         android:layout_centerHorizontal="true"
@@ -105,12 +105,12 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="PT:11 INR:50"
-        android:id="@+id/exam_lastExamResult"
+        android:id="@+id/exam_tvLastExamResult"
         android:layout_alignStart="@+id/exam_tvExamDate"
         android:textColor="#ff646a6a"
         android:layout_marginTop="5dp"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/exam_lastExamDate" />
+        android:layout_below="@+id/exam_tvLastExamDate" />
 
     <TextView
         android:layout_width="80dp"
@@ -129,7 +129,7 @@
         android:layout_height="wrap_content"
         android:inputType="numberDecimal"
         android:id="@+id/exam_etWarfarin"
-        android:layout_below="@+id/exam_lastExamResult"
+        android:layout_below="@+id/exam_tvLastExamResult"
         android:editable="true"
         android:layout_marginTop="20dp"
         android:text="0"

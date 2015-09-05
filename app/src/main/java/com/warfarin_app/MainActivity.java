@@ -28,6 +28,8 @@ public class MainActivity extends FragmentActivity {
         SysUtil.setContext(getBaseContext());
         setContentView(R.layout.activity_main);
 
+
+
         tabHost = (FragmentTabHost)findViewById(android.R.id.tabhost);
 
         tabHost.setup(MainActivity.this, getSupportFragmentManager(), R.id.realtabcontent);
@@ -69,6 +71,7 @@ public class MainActivity extends FragmentActivity {
         context = this.getApplicationContext();
 
         DbUtil.init(context);
+        DbUtil.cleanDb();
         btManager = new BTManager();
         btManager.start();
 
