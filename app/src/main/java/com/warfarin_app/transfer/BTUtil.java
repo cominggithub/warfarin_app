@@ -5,9 +5,11 @@ import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.util.Log;
 
 import com.warfarin_app.MainActivity;
+import com.warfarin_app.util.LogUtil;
 
 import java.util.Set;
 import java.util.Vector;
@@ -44,7 +46,8 @@ public class BTUtil {
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         Log.d("bt", "scan device");
-        requestBluetoothPermission();
+        LogUtil.appendMsg("scan Bluetooth device \"" + name + "\"");
+                requestBluetoothPermission();
 
         Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
 // If there are paired devices
@@ -54,13 +57,14 @@ public class BTUtil {
                 Log.d("bt", device.getName() + ": " + device.getAddress());
                 if (device.getName().equals(name))
                 {
+                    LogUtil.appendMsg("found Bluetooth device " + name + ", " + device.getAddress());
                     return device;
                 }
             }
         }
         else
         {
-            Log.d("bt", "no device found");
+            LogUtil.appendMsg("no Bluetooth device found");
         }
 
         return null;
@@ -76,6 +80,9 @@ public class BTUtil {
             // Device does not support Bluetooth
         }
 
+
+
+
         if (!mBluetoothAdapter.isEnabled()) {
             Log.d("bt", "bluetooth is not enabled");
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
@@ -84,6 +91,28 @@ public class BTUtil {
         }
     }
 
+    public static boolean hasBluetoothCapability()
+    {
+
+        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        if (mBluetoothAdapter == null) {
+            Log.d("bt", "this device doesn't support bluetooth");
+            LogUtil.appendMsg("this device doesn't support bluetooth");
+            return false;
+        }
+
+        if ( Build.FINGERPRINT.startsWith("generic"))
+        {
+            Log.d("bt", "this device doesn't support bluetooth on emulator");
+            return false;
+        }
+
+        Log.d("bt", mBluetoothAdapter.getAddress());
+
+
+        return true;
+    }
     public static void destroy()
     {
         mainActivity.unregisterReceiver(mReceiver);

@@ -7,20 +7,19 @@ package com.warfarin_app.transfer;
 import android.util.Log;
 
 import com.warfarin_app.LogMsgConsumer;
-import com.warfarin_app.LogMsgProvider;
 import com.warfarin_app.data.ExamData;
 import com.warfarin_app.db.DbUtil;
+import com.warfarin_app.util.LogUtil;
 
 import java.util.ArrayList;
 
-public class ExamDataReceiver implements LogMsgProvider {
+public class ExamDataReceiver {
 
     ArrayList<ExamDataListener> listeners;
 
     ArrayList<LogMsgConsumer> logConsumers;
 
 
-    String logMsg;
     public ExamDataReceiver()
     {
 
@@ -40,12 +39,14 @@ public class ExamDataReceiver implements LogMsgProvider {
         if (!logConsumers.contains((c)))
             logConsumers.add(c);
     }
+
     public void notifyExamDataReceived(ExamData d)
     {
         if (d == null)
             return;
 
         DbUtil.saveExamData(d);
+        LogUtil.appendMsg("received: " + d.toString());
         Log.d("app", "notify exam data received: " + d.toString());
         for (ExamDataListener r : listeners)
         {
@@ -58,43 +59,5 @@ public class ExamDataReceiver implements LogMsgProvider {
         {
             c.appendMsg(s);
         }
-    }
-
-    public void appendMsg(String s)
-    {
-        logMsg += logMsg + "\n" + s;
-        notifyAppendMsg(s);
-    }
-
-
-    public void logBTPaired()
-    {
-        appendMsg("paired");
-    }
-
-    public void logCRCError()
-    {
-        appendMsg("crc error");
-    }
-
-    public void logRecvBytes(byte data[])
-    {
-        StringBuilder sb;
-        sb = new StringBuilder();
-        for (byte b : data)
-        {
-            sb.append(String.format("%d ", b));
-        }
-    }
-    public void logExamData(ExamData d)
-    {
-
-    }
-
-
-    @Override
-    public String getLogMsg()
-    {
-        return logMsg;
     }
 }

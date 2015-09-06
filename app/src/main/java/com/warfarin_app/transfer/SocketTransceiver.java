@@ -2,6 +2,8 @@ package com.warfarin_app.transfer;
 
 import android.util.Log;
 
+import com.warfarin_app.util.LogUtil;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -26,13 +28,22 @@ public class SocketTransceiver {
 
         try {
             mmOutStream.write("AAA".getBytes());
+
+            LogUtil.appendMsg("send AAA");
+
             mmOutStream.write(bytes);
             mmOutStream.flush();
             Log.d("bt", String.format("send %d: %s(%s)",
+                            bytes.length,
+                            new String(bytes),
+                            byteToString(bytes, bytes.length))
+            );
+
+            LogUtil.appendMsg(String.format("send %d: %s(%s)",
                     bytes.length,
                     new String(bytes),
-                    byteToString(bytes, bytes.length))
-            );
+                    byteToString(bytes, bytes.length)));
+
         } catch (IOException e) {
             Log.d("bt", e.getMessage());
         }
@@ -64,6 +75,13 @@ public class SocketTransceiver {
                     length,
                     new String(Arrays.copyOf(buffer, cumReadCnt)),
                     byteToString(buffer, cumReadCnt)));
+
+            LogUtil.appendMsg(String.format("received %d:%d: %s (%s)",
+                    cumReadCnt,
+                    length,
+                    new String(Arrays.copyOf(buffer, cumReadCnt)),
+                    byteToString(buffer, cumReadCnt)));
+
         }catch (IOException e)
         {
             Log.e("bt", "exception", e);

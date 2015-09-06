@@ -82,6 +82,7 @@ public class BTConnectionHandler extends Thread {
                         }catch (Exception e)
                         {
                             Log.e("bt", "exception", e);
+                            isRunning = false;
                         }
                     }
 
@@ -112,7 +113,7 @@ public class BTConnectionHandler extends Thread {
     public void stopRunning()
     {
         isRunning = false;
-        Log.d("bt", "stop BT Manager");
+        Log.d("bt", "stop BT Connection Handler");
         if (dataReadSignal != null)
         {
             dataReadSignal.setHasDataToProcess(true);
@@ -123,7 +124,7 @@ public class BTConnectionHandler extends Thread {
                 mmSocket.close();
             } catch (IOException closeException) {
 
-                Log.d("bt", closeException.toString());
+                Log.e("bt", "exception", closeException);
 
             }
         }

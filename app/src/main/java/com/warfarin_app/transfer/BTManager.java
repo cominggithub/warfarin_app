@@ -8,9 +8,9 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.util.Log;
 
-import com.warfarin_app.LogMsgConsumer;
-import com.warfarin_app.LogMsgProvider;
 import com.warfarin_app.data.ExamData;
+import com.warfarin_app.util.LogUtil;
+
 public class BTManager extends Thread {
     private ExamDataReceiver examDataReceiver;
     private boolean alive = true;
@@ -20,6 +20,7 @@ public class BTManager extends Thread {
     private static DataReadSignal dataReadSignal = new DataReadSignal();
     private static BTConnectionHandler btConnectionHandler;
     private static ExamData data;
+    private static int BTScanInterval = 20000;
 
     public BTManager()
     {
@@ -27,29 +28,43 @@ public class BTManager extends Thread {
     }
     public void run() {
         Log.d("bt", "bt manager start");
+        LogUtil.appendMsg("Start Bluetooth Manager");
+
 
         while(alive)
         {
+            if (!pairBTDevice()) {
+                try {
+                    Thread.sleep(BTScanInterval);
+                }catch (Exception e)
+                {
+                    Log.e("bt", "exception", e);
+                }
 
-            if (!isBtHandlerStarted())
-            {
-                startBtHandler();
             }
+            else {
 
-            data = recvExamData();
-            if (data != null)
-            {
-                examDataReceiver.notifyExamDataReceived(data);
+                if (!isBtHandlerStarted()) {
+                    startBtHandler();
+                }
+
+                data = recvExamData();
+                if (data != null) {
+                    examDataReceiver.notifyExamDataReceived(data);
+                }
             }
         }
 
+        LogUtil.appendMsg("Stop Bluetooth Manager");
     }
 
-    public void startBtHandler()
-    {
+    public void startBtHandler() {
         Log.d("bt", "startBtHandler");
+
+        LogUtil.appendMsg("Start Bluetooth Connection Handler");
+
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        pairBTDevice();
+
 
         btConnectionHandler = new BTConnectionHandler(device, mBluetoothAdapter);
         btConnectionHandler.setDataReadSignal(dataReadSignal);
@@ -70,7 +85,6 @@ public class BTManager extends Thread {
     }
     public boolean pairBTDevice()
     {
-        Log.d("bt", "pair BT Device");
         if (device == null)
         {
             device = BTUtil.scan_device(BLUETEH);
@@ -78,8 +92,6 @@ public class BTManager extends Thread {
 
         if (device == null)
             return false;
-
-        examDataReceiver.logBTPaired();
 
         return true;
     }
@@ -107,18 +119,8 @@ public class BTManager extends Thread {
     }
 
 
-    public LogMsgProvider getLogMsgProvider()
-    {
-        return examDataReceiver;
-    }
-
     public void addExamDataListener(ExamDataListener listener)
     {
         examDataReceiver.addExamDataListener(listener);
-    }
-
-    public void addLogMsgConsumer(LogMsgConsumer c)
-    {
-        examDataReceiver.addLogMsgConsumer(c);
     }
 }

@@ -108,6 +108,6 @@ public class ExamData {
     @Override
     public String toString()
     {
-        return String.format("ExamData: pt: %f, inr: %f", pt, inr);
+        return String.format("ExamData: pt: %.2f, inr: %.2f", pt, inr);
     }
 }

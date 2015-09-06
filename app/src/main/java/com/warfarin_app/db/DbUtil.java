@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.warfarin_app.Patient;
 import com.warfarin_app.data.ExamData;
+import com.warfarin_app.data.LogData;
 
 import java.util.ArrayList;
 
@@ -22,9 +23,9 @@ public class DbUtil {
     private static Context context;
     private static WarfarinDbHelper mDbHelper;
 
-    public static void init(Context context)
+    public static void init(Context c)
     {
-//        this.context = context;
+        context = c;
         mDbHelper = new WarfarinDbHelper(context);
         if (!checkDb())
         {
@@ -36,6 +37,11 @@ public class DbUtil {
     {
 
         return true;
+    }
+
+    public static void deleteDb()
+    {
+        context.deleteDatabase("warfarin.db");
     }
 
     private static void createDb()
@@ -52,8 +58,8 @@ public class DbUtil {
         ContentValues values = new ContentValues();
         values.put(PatientEntry.COLUMN_NAME_NAME, patient.getName());
         values.put(PatientEntry.COLUMN_NAME_BIRTHDAY, patient.getBirthday());
-        values.put(PatientEntry.COLUMN_NAME_IS_WARFARIN, patient.getIsWarfarin() ? 1:0);
-        values.put(PatientEntry.COLUMN_NAME_GENDER, patient.getGender() ? 1:0);
+        values.put(PatientEntry.COLUMN_NAME_IS_WARFARIN, patient.getIsWarfarin() ? 1 : 0);
+        values.put(PatientEntry.COLUMN_NAME_GENDER, patient.getGender() ? 1 : 0);
         values.put(PatientEntry.COLUMN_NAME_DOCTOR, patient.getDoctor());
 
 // Insert the new row, returning the primary key value of the new row
@@ -154,6 +160,92 @@ public class DbUtil {
         values.put(ExamEntry.COLUMN_NAME_MARFARIN, d.warfarin);
 
         d.id = db.insert(ExamEntry.TABLE_NAME, null, values);
+    }
+
+    public static void addLog(LogData l)
+    {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(LogEntry.COLUMN_NAME_DATE, l.date);
+        values.put(LogEntry.COLUMN_NAME_MSG, l.msg);
+
+        db.insert(LogEntry.TABLE_NAME, null, values);
+    }
+
+    public static boolean loadLogHistory(ArrayList<LogData> list, int limitCount)
+    {
+        int result;
+        boolean gender;
+        boolean isMarfarin;
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        Cursor cursor;
+
+        String[] projection = {
+                LogEntry._ID,
+                LogEntry.COLUMN_NAME_DATE,
+                LogEntry.COLUMN_NAME_MSG,
+        };
+
+        String[] where = {
+                ExamEntry._ID,
+        };
+
+
+        String sortOrder =
+                ExamEntry._ID + " DESC";
+        String limit = "" + limitCount;
+
+
+        // no limit
+        if (limitCount == -1) {
+            cursor =db.query(
+                    LogEntry.TABLE_NAME,  // The table to query
+                    projection,                               // The columns to return
+                    null,
+                    null,                                       // The values for the WHERE clause
+                    null,                                     // don't group the rows
+                    null,                                     // don't filter by row groups
+                    sortOrder                                 // The sort order,
+            );
+        }
+        else
+        {
+            cursor =db.query(
+                    LogEntry.TABLE_NAME,  // The table to query
+                    projection,                               // The columns to return
+                    null,
+                    null,                                       // The values for the WHERE clause
+                    null,                                     // don't group the rows
+                    null,                                     // don't filter by row groups
+                    sortOrder,                                 // The sort order,
+                    limit
+            );
+        }
+
+        if (cursor.getCount() < 1)
+        {
+            return false;
+        }
+
+
+        cursor.moveToFirst();
+
+        for(int i=0; i<cursor.getCount(); i++)
+        {
+            LogData data = new LogData("");
+            data.id = cursor.getLong(cursor.getColumnIndexOrThrow(LogEntry._ID));
+            data.date = cursor.getLong(cursor.getColumnIndexOrThrow(LogEntry.COLUMN_NAME_DATE));
+            data.msg = cursor.getString(cursor.getColumnIndexOrThrow(LogEntry.COLUMN_NAME_MSG));
+
+            list.add(data);
+
+            cursor.moveToNext();
+        }
+
+        return true;
+
+
     }
 
     public static boolean loadExamHistory(ArrayList<ExamData> list)
@@ -285,7 +377,21 @@ public class DbUtil {
 
     public static void cleanDb()
     {
+//        cleanLogData();
+        cleanExamData();
+
+    }
+
+    public static void cleanExamData()
+    {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         db.delete(ExamEntry.TABLE_NAME, null, null);
+    }
+
+    public static void cleanLogData()
+    {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        db.delete(LogEntry.TABLE_NAME, null, null);
+
     }
 }
