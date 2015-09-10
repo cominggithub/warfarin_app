@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.util.Log;
 
@@ -22,49 +23,40 @@ public class BTUtil {
     private static final int REQUEST_ENABLE_BT = 2;
     private static MainActivity mainActivity;
     private static Vector<BluetoothAdapter> mArrayAdapter = new Vector<BluetoothAdapter>();
-    private static final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-
-            if (BluetoothDevice.ACTION_FOUND.equals(action))
-            {
-                // Get the BluetoothDevice object from the Intent
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                // Add the name and address to an array adapter to show in a ListView
-//                mArrayAdapter.add(device.getName() + "\n" + device.getAddress());
-                Log.d("bt", device.getName() + "\n" + device.getAddress());
-            }
-        }
-    };
+    private static boolean isConnected = false;
+    private static BluetoothDevice device;
 
     public static void setMainActivity(MainActivity activity)
     {
         mainActivity = activity;
+        init();
     }
     public static BluetoothDevice scan_device(String name)
     {
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        Log.d("bt", "scan device");
-        LogUtil.appendMsg("scan Bluetooth device \"" + name + "\"");
+        Log.d("bt", "scan paired Bluetooth device \"" + name + "\"");
+        LogUtil.appendMsg("scan paired Bluetooth device \"" + name + "\"");
                 requestBluetoothPermission();
 
         Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
-// If there are paired devices
         if (pairedDevices.size() > 0) {
             // Loop through paired devices
             for (BluetoothDevice device : pairedDevices) {
-                Log.d("bt", device.getName() + ": " + device.getAddress());
+                Log.d("bt", "found paired Bluetooth device " + device.getName() + ", " + device.getAddress());
+                LogUtil.appendMsg("found paired Bluetooth device " + device.getName() + ", " + device.getAddress());
                 if (device.getName().equals(name))
                 {
-                    LogUtil.appendMsg("found Bluetooth device " + name + ", " + device.getAddress());
+                    LogUtil.appendMsg("use Bluetooth device " + device.getName() + ", " + device.getAddress());
+                    Log.d("bt", "use paired Bluetooth device " + device.getName() + ", " + device.getAddress());
+                    setDevice(device);
                     return device;
                 }
             }
         }
         else
         {
-            LogUtil.appendMsg("no Bluetooth device found");
+            LogUtil.appendMsg("no Bluetooth device found, please pair Bluetooth device before using this APP");
         }
 
         return null;
@@ -74,14 +66,10 @@ public class BTUtil {
     {
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-
         if (mBluetoothAdapter == null) {
             Log.d("bt", "this device doesn't support bluetooth");
             // Device does not support Bluetooth
         }
-
-
-
 
         if (!mBluetoothAdapter.isEnabled()) {
             Log.d("bt", "bluetooth is not enabled");
@@ -113,9 +101,79 @@ public class BTUtil {
 
         return true;
     }
-    public static void destroy()
+
+    private static final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+
+            Log.d("btevt", "BT event");
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                LogUtil.appendMsg("found Bluetooth device " + device.getName() + ", " + device.getAddress());
+                Log.d("btevt", "found Bluetooth device " + device.getName() + ", " + device.getAddress());
+
+            }
+            else if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
+                LogUtil.appendMsg(device.getName() + " " + device.getAddress() + " connect");
+                Log.d("btevt", device.getName() + " " + device.getAddress() + " connect");
+                isConnected = true;
+
+            }
+            else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+                Log.d("btevt", device.getName() + " " + device.getAddress() + " discovery finished");
+
+            }
+            else if (BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED.equals(action)) {
+                Log.d("btevt", "disconnect requested " + device.getAddress());
+
+            }
+            else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
+                LogUtil.appendMsg(device.getName() + " " + device.getAddress() + " disconnect");
+                Log.d("btevt", device.getName() + " " + device.getAddress() + " disconnect");
+                if (getDevice() == device) {
+                    setDevice(null);
+                    isConnected = false;
+                }
+
+            }
+        }
+    };
+
+    public static void init()
     {
+        Log.d("btevt", "BTUtil init");
+        IntentFilter filter1 = new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED);
+        IntentFilter filter2 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
+        IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        IntentFilter filter4 = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        mainActivity.registerReceiver(mReceiver, filter1);
+        mainActivity.registerReceiver(mReceiver, filter2);
+        mainActivity.registerReceiver(mReceiver, filter3);
+        mainActivity.registerReceiver(mReceiver, filter4);
+    }
+
+    public static void close()
+    {
+        Log.d("btevt", "BTUtil close");
         mainActivity.unregisterReceiver(mReceiver);
     }
+    private static BluetoothDevice getDevice()
+    {
+        return BTUtil.device;
+    }
+
+    public static boolean isConnected()
+    {
+        return isConnected;
+    }
+    private static void setDevice(BluetoothDevice d) {
+        device = d;
+    }
+
+//    public static void destroy()
+//    {
+//        mainActivity.unregisterReceiver(mReceiver);
+//    }
 
 }

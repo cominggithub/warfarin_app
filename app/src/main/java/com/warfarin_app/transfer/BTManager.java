@@ -8,6 +8,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.util.Log;
 
+import com.warfarin_app.MainActivity;
 import com.warfarin_app.data.ExamData;
 import com.warfarin_app.util.LogUtil;
 
@@ -20,37 +21,77 @@ public class BTManager extends Thread {
     private static DataReadSignal dataReadSignal = new DataReadSignal();
     private static BTConnectionHandler btConnectionHandler;
     private static ExamData data;
-    private static int BTScanInterval = 20000;
+    private static int BTScanInterval = 10000;
+    private static int recvExamInterval = 10000;
+    private static boolean isConnected = false;
+    MainActivity mainActivity;
 
-    public BTManager()
+    public BTManager(MainActivity mainActivity)
     {
         examDataReceiver = new ExamDataReceiver();
+        this.mainActivity = mainActivity;
     }
     public void run() {
         Log.d("bt", "bt manager start");
         LogUtil.appendMsg("Start Bluetooth Manager");
 
-
         while(alive)
         {
+
+            Log.d("bt", "manager loop");
+
             if (!pairBTDevice()) {
+                Log.d("bt", "no paired device");
                 try {
                     Thread.sleep(BTScanInterval);
                 }catch (Exception e)
                 {
                     Log.e("bt", "exception", e);
+                    device = null;
                 }
 
             }
-            else {
 
+            if(device != null)
+            {
+                Log.d("bt", "recv exam data");
                 if (!isBtHandlerStarted()) {
+                    Log.d("bt", "bt handler is not stared");
                     startBtHandler();
                 }
 
                 data = recvExamData();
                 if (data != null) {
                     examDataReceiver.notifyExamDataReceived(data);
+                }
+                else
+                {
+                    Log.d("bt", "null exam data, set device null");
+                    if (btConnectionHandler != null && btConnectionHandler.isRunning()) {
+                        btConnectionHandler.stopRunning();
+                        btConnectionHandler = null;
+                    }
+                    device = null;
+                    try {
+                        Thread.sleep(BTScanInterval);
+                    }catch (Exception e)
+                    {
+                        Log.e("bt", "exception", e);
+                        device = null;
+                    }
+                }
+            }
+            else
+            {
+                LogUtil.appendMsg("wait BT connection");
+                try {
+                    Thread.sleep(BTScanInterval);
+                }catch (Exception e)
+                {
+                    Log.e("bt", "exception", e);
+                    Log.d("bt", "set device null");
+                    device = null;
+                    btConnectionHandler = null;
                 }
             }
         }
@@ -85,13 +126,18 @@ public class BTManager extends Thread {
     }
     public boolean pairBTDevice()
     {
+        Log.d("bt", "pair bt device");
         if (device == null)
         {
+            Log.d("bt", "start scan");
             device = BTUtil.scan_device(BLUETEH);
         }
 
         if (device == null)
+        {
+            Log.d("bt", "scan fail");
             return false;
+        }
 
         return true;
     }
@@ -99,28 +145,55 @@ public class BTManager extends Thread {
     public ExamData recvExamData()
     {
 
+        Log.d("bt", "wait sync data\n");
         synchronized (dataReadSignal)
         {
             try
             {
-                dataReadSignal.wait();
+                dataReadSignal.wait(recvExamInterval);
+                Log.d("bt", "wait sync data\n");
                 if (dataReadSignal.hasDataToProcess) {
                     dataReadSignal.setHasDataToProcess(false);
                     return btConnectionHandler.getExamData();
                 }
+                else
+                {
+                    Log.d("bt", "wait exam data timeout");
+                }
+            }
+            catch (InterruptedException ix)
+            {
+                Log.d("app", "wait exam data timeout");
+                Log.d("bt", "wait exam data timeout");
+                isConnected = false;
             }
             catch (Exception e)
             {
                 Log.e("bt", "exception", e);
+                isConnected = false;
             }
 
         }
+
         return null;
     }
 
 
+    private BluetoothDevice getDevice()
+    {
+        return this.device;
+    }
+
+    private void setDevice(BluetoothDevice d)
+    {
+        device = d;
+    }
     public void addExamDataListener(ExamDataListener listener)
     {
         examDataReceiver.addExamDataListener(listener);
     }
+
+
+
+
 }

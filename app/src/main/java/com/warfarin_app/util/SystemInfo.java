@@ -1,12 +1,15 @@
-package com.warfarin_app;
+package com.warfarin_app.util;
 
 import android.content.Context;
+
 import java.util.Locale;
 
 /**
- * Created by Coming on 8/12/15.
+ * Created by Coming on 9/10/15.
  */
-public class SysUtil {
+public class SystemInfo {
+    public static boolean isBluetooth = false;
+
     private static Context context;
 
 

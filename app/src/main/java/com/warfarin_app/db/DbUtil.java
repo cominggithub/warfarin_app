@@ -53,7 +53,7 @@ public class DbUtil {
     {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
-        Log.d("app", "save patient");
+
 // Create a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
         values.put(PatientEntry.COLUMN_NAME_NAME, patient.getName());
@@ -65,7 +65,7 @@ public class DbUtil {
 // Insert the new row, returning the primary key value of the new row
         long newRowId = -1;
         if (patient.getId() != 1) {
-            Log.d("app", "insert patient");
+
             newRowId = db.insert(
                     PatientEntry.TABLE_NAME,
                     null,
@@ -75,7 +75,7 @@ public class DbUtil {
         }
         else
         {
-            Log.d("app", "update patient");
+
             String selection = PatientEntry._ID + " = " + patient.getId();
 
             db.update(
@@ -85,7 +85,7 @@ public class DbUtil {
                     null);
 
         }
-        Log.d("app", "new id: " + newRowId);
+
     }
 
     public static boolean loadPatient(Patient patient)
@@ -123,7 +123,6 @@ public class DbUtil {
                 sortOrder                                 // The sort order
         );
 
-        Log.d("app", "cursor count: " + cursor.getCount());
 
         if (cursor.getCount() < 1)
         {
@@ -150,8 +149,6 @@ public class DbUtil {
     public static void saveExamData(ExamData d)
     {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
-
-        Log.d("app", "save exam data: " + d.toString());
 
         ContentValues values = new ContentValues();
         values.put(ExamEntry.COLUMN_NAME_DATE, d.date);
@@ -316,9 +313,6 @@ public class DbUtil {
 //            );
         }
 
-
-        Log.d("app", "cursor count: " + cursor.getCount());
-
         if (cursor.getCount() < 1)
         {
             return false;
@@ -362,7 +356,6 @@ public class DbUtil {
     }
     public static void insertExamHistorySample()
     {
-        Log.d("app", "insertExamHistorySample");
         for(int i=0; i<10; i++)
         {
             ExamData ed = new ExamData();

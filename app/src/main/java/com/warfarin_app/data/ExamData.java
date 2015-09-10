@@ -2,14 +2,14 @@ package com.warfarin_app.data;
 
 import android.util.Log;
 
-import com.warfarin_app.SysUtil;
+import com.warfarin_app.util.SystemInfo;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.text.DateFormat;
-import java.util.Locale;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.text.DateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Locale;
 /**
  * Created by Coming on 8/9/15.
  */
@@ -32,7 +32,7 @@ public class ExamData {
 
         DateFormat shortDateFormat =
                 DateFormat.getDateInstance(
-                        DateFormat.SHORT, SysUtil.getLocal());
+                        DateFormat.SHORT, SystemInfo.getLocal());
 
 
         Date d = new Date();
@@ -45,7 +45,7 @@ public class ExamData {
 
         DateFormat shortDateFormat =
                 DateFormat.getTimeInstance(
-                        DateFormat.SHORT, SysUtil.getLocal());
+                        DateFormat.SHORT, SystemInfo.getLocal());
 
         Date d = new Date();
         d.setTime(date);

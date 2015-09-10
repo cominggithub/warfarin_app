@@ -21,6 +21,7 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.warfarin_app.data.ExamData;
 import com.warfarin_app.db.DbUtil;
 import com.warfarin_app.transfer.ExamDataListener;
+import com.warfarin_app.util.SystemInfo;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,9 +64,11 @@ public class HistoryFragment extends android.support.v4.app.Fragment implements 
 
     public void refresh()
     {
+        Log.d("app", "refresh start");
         loadExamDataFromDb();
         loadExamDataToListView();
         refreshChartData();
+        Log.d("app", "refresh done");
     }
 
     public void loadExamDataToListView()
@@ -91,15 +94,13 @@ public class HistoryFragment extends android.support.v4.app.Fragment implements 
         };
 
         SimpleAdapter adapter = new SimpleAdapter(
-                getActivity().getBaseContext(),
+//                getActivity().getBaseContext(),
+                mainActivity.getBaseContext(),
                 examDataList,
                 R.layout.exam_list_entry,
                 fields,
                 views
         );
-
-        Log.d("app", "exam data list size: " + examDataList.size());
-
 
         listview.setAdapter(null);
         listview.setAdapter(adapter);
@@ -107,20 +108,23 @@ public class HistoryFragment extends android.support.v4.app.Fragment implements 
 
     public void loadExamDataFromDb()
     {
-        data = new ArrayList<ExamData>();
+        data = new ArrayList<>();
 
-//        DbUtil.cleanDb();
-        DbUtil.loadExamHistory(data);
-//        if (data.size() == 0)
-//        {
-//            DbUtil.insertExamHistorySample();
-//            DbUtil.loadExamHistory(data);
-//        }
+        if (SystemInfo.isBluetooth)
+        {
+            DbUtil.loadExamHistory(data);
+
+        }
+        else
+        {
+            DbUtil.cleanExamData();
+            DbUtil.insertExamHistorySample();
+            DbUtil.loadExamHistory(data);
+        }
     }
 
     public void initChart()
     {
-
         mChart = (LineChart) this.getView().findViewById(R.id.chart);
         mChart.setDrawGridBackground(false);
 
@@ -213,7 +217,7 @@ public class HistoryFragment extends android.support.v4.app.Fragment implements 
 
         // set the line to be drawn like this "- - - - - -"
         ptSet.enableDashedLine(10f, 5f, 0f);
-        ptSet.setColor(Color.GREEN);
+        ptSet.setColor(Color.YELLOW);
         ptSet.setCircleColor(Color.YELLOW);
         ptSet.setLineWidth(1f);
         ptSet.setCircleSize(3f);
@@ -237,8 +241,8 @@ public class HistoryFragment extends android.support.v4.app.Fragment implements 
 
         // set the line to be drawn like this "- - - - - -"
         inrSet.enableDashedLine(10f, 5f, 0f);
-        inrSet.setColor(Color.GREEN);
-        inrSet.setCircleColor(Color.YELLOW);
+        inrSet.setColor(Color.BLUE);
+        inrSet.setCircleColor(Color.BLUE);
         inrSet.setLineWidth(1f);
         inrSet.setCircleSize(3f);
         inrSet.setDrawCircleHole(false);
@@ -261,7 +265,7 @@ public class HistoryFragment extends android.support.v4.app.Fragment implements 
 
         // set the line to be drawn like this "- - - - - -"
         warfarinSet.enableDashedLine(10f, 5f, 0f);
-        warfarinSet.setColor(Color.GREEN);
+        warfarinSet.setColor(Color.RED);
         warfarinSet.setCircleColor(Color.RED);
         warfarinSet.setLineWidth(1f);
         warfarinSet.setCircleSize(3f);
@@ -343,7 +347,7 @@ public class HistoryFragment extends android.support.v4.app.Fragment implements 
     @Override
     public void onExamDataReceived(ExamData d) {
 
-
+        Log.d("app", "onExamDataReceived " + d.toString());
         mainActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {

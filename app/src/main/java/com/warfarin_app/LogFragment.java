@@ -52,6 +52,7 @@ public class LogFragment extends android.support.v4.app.Fragment implements LogM
         btStop = (Button) this.getView().findViewById(R.id.log_btStop);
         btStop.setOnClickListener(this);
         setStartLogging();
+        updateLogMessage();
 
     }
 

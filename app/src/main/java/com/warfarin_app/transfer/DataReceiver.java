@@ -38,7 +38,7 @@ public class DataReceiver {
             this.os = socket.getOutputStream();
         }catch (IOException e)
         {
-            e.printStackTrace();
+            Log.e("bt", "exception", e);
         }
     }
 
@@ -66,10 +66,14 @@ public class DataReceiver {
     {
         try
         {
-            SocketTransceiver.write(socket.getOutputStream(), cmd);
+            if(SocketTransceiver.write(socket.getOutputStream(), cmd) == -1)
+            {
+                alive = false;
+            }
         }catch (IOException e)
         {
-
+            Log.e("bt", "exception", e);
+            alive = false;
         }
     }
 
@@ -117,7 +121,12 @@ public class DataReceiver {
         while(alive)
         {
             cmd = getCommand();
-            if(cmd.equals(BTCmd.OK))
+
+            if (cmd == null || cmd.equals(""))
+            {
+                alive = false;
+            }
+            else if(cmd.equals(BTCmd.OK))
             {
                 sendBtCmd(BTCmd.ACK1);
             }
@@ -136,7 +145,7 @@ public class DataReceiver {
                 }
             }catch (IOException e)
             {
-                e.printStackTrace();
+                Log.e("bt", "exception", e);
                 alive = false;
             }
 
@@ -177,7 +186,12 @@ public class DataReceiver {
 
         b = new byte[4];
         skipToPrefix();
-        SocketTransceiver.read(is, b, 4);
+
+        if (SocketTransceiver.read(is, b, 4) == -1)
+        {
+            alive = false;
+            return "";
+        }
         cmd = new String(b);
 
         Log.d("bt", "cmd: " + cmd);
@@ -185,7 +199,7 @@ public class DataReceiver {
 
     }
 
-    public void skipToPrefix()
+    public boolean skipToPrefix()
     {
         int i;
         int j;
@@ -200,7 +214,8 @@ public class DataReceiver {
         Log.d("bt", "skip to prefix " + BTCmd.PREFIX);
         while(!prefix.equals(BTCmd.PREFIX))
         {
-            SocketTransceiver.read(is, b, 1);
+            if (SocketTransceiver.read(is, b, 1) < 1)
+                return false;
             if (i < BTCmd.PREFIX.length())
             {
                 buf[i++] = b[0];
@@ -218,6 +233,7 @@ public class DataReceiver {
         }
 
         Log.d("bt", "match prefix: " + prefix + "(" + BTCmd.PREFIX + ")");
+        return true;
     }
 
     public ExamData readExamData()

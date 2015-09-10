@@ -14,9 +14,9 @@ import java.util.Arrays;
  */
 public class SocketTransceiver {
 
-    public static void write(OutputStream mmOutStream, String s)
+    public static int write(OutputStream mmOutStream, String s)
     {
-        write(mmOutStream, s.getBytes());
+        return write(mmOutStream, s.getBytes());
     }
 
     private static void writePrefix(OutputStream mmOutStream)
@@ -24,7 +24,7 @@ public class SocketTransceiver {
 
     }
     /* Call this from the main activity to send data to the remote device */
-    public static void write(OutputStream mmOutStream, byte[] bytes) {
+    public static int write(OutputStream mmOutStream, byte[] bytes) {
 
         try {
             mmOutStream.write("AAA".getBytes());
@@ -46,9 +46,10 @@ public class SocketTransceiver {
 
         } catch (IOException e) {
             Log.d("bt", e.getMessage());
+            return -1;
         }
 
-
+        return 1;
     }
 
     public static int read(InputStream is, byte[] buffer, int length)
@@ -85,6 +86,7 @@ public class SocketTransceiver {
         }catch (IOException e)
         {
             Log.e("bt", "exception", e);
+            cumReadCnt = -1;
         }
 
         return cumReadCnt;

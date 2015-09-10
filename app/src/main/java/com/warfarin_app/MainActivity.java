@@ -2,6 +2,7 @@ package com.warfarin_app;
 
 
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import com.warfarin_app.db.DbUtil;
 import com.warfarin_app.transfer.BTManager;
 import com.warfarin_app.transfer.BTUtil;
 import com.warfarin_app.transfer.ExamDataListener;
+import com.warfarin_app.util.SystemInfo;
 
 public class MainActivity extends FragmentActivity {
     private FragmentTabHost tabHost;
@@ -32,10 +34,11 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        SysUtil.setContext(getBaseContext());
+        SystemInfo.setContext(getBaseContext());
         setContentView(R.layout.activity_main);
 
 
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         tabHost = (FragmentTabHost)findViewById(android.R.id.tabhost);
 
@@ -104,11 +107,13 @@ public class MainActivity extends FragmentActivity {
         DbUtil.init(context);
         DbUtil.deleteDb();
 //        DbUtil.cleanDb();
-        BTUtil.setMainActivity(this);
-        if (BTUtil.hasBluetoothCapability())
-        {
-            btManager = new BTManager();
-            btManager.start();
+
+        if (SystemInfo.isBluetooth) {
+            BTUtil.setMainActivity(this);
+            if (BTUtil.hasBluetoothCapability()) {
+                btManager = new BTManager(this);
+                btManager.start();
+            }
         }
 
 
@@ -185,11 +190,17 @@ public class MainActivity extends FragmentActivity {
         super.onWindowFocusChanged(hasFocus);
         if (healthDashboardFragment != null)
         {
-            Log.d("app", "WwWWwWWWwwwww");
             healthDashboardFragment.dumpPosition();
         }
 
 
+    }
+
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+        BTUtil.close();
     }
 
 

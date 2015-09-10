@@ -43,7 +43,7 @@ public class BTConnectionHandler extends Thread {
             tmp = device.createRfcommSocketToServiceRecord(MY_UUID);
 //            tmp = device.createRfcommSocketToServiceRecord(null);
         } catch (IOException e) {
-            Log.d("bt", e.toString());
+            Log.e("bt", "exception", e);
             stopRunning();
 
         }
@@ -58,7 +58,7 @@ public class BTConnectionHandler extends Thread {
     public void run() {
         // Cancel discovery because it will slow down the connection
         mBluetoothAdapter.cancelDiscovery();
-
+        isRunning = true;
         Log.d("bt", "start connect");
         try {
             // Connect the device through the socket. This will block
@@ -85,7 +85,11 @@ public class BTConnectionHandler extends Thread {
                             isRunning = false;
                         }
                     }
-
+                }
+                else
+                {
+                    Log.d("bt", "null exam data");
+                    isRunning = false;
                 }
             }
 
@@ -95,9 +99,7 @@ public class BTConnectionHandler extends Thread {
             Log.e("bt", "exception", e);
         }
 
-
         stopRunning();
-        return;
     }
 
     public ExamData getExamData()
@@ -107,7 +109,7 @@ public class BTConnectionHandler extends Thread {
 
     public boolean isRunning()
     {
-        return true;
+        return isRunning;
     }
 
     public void stopRunning()
@@ -116,7 +118,18 @@ public class BTConnectionHandler extends Thread {
         Log.d("bt", "stop BT Connection Handler");
         if (dataReadSignal != null)
         {
-            dataReadSignal.setHasDataToProcess(true);
+            dataReadSignal.setHasDataToProcess(false);
+            synchronized (dataReadSignal)
+            {
+                try
+                {
+                    dataReadSignal.notifyAll();
+                }catch (Exception e)
+                {
+                    Log.e("bt", "exception", e);
+                    isRunning = false;
+                }
+            }
         }
 
         if (mmSocket != null) {
@@ -128,7 +141,6 @@ public class BTConnectionHandler extends Thread {
 
             }
         }
-
     }
 
 

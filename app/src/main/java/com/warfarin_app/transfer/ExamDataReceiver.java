@@ -4,8 +4,6 @@ package com.warfarin_app.transfer;
  * Created by Coming on 8/19/15.
  */
 
-import android.util.Log;
-
 import com.warfarin_app.LogMsgConsumer;
 import com.warfarin_app.data.ExamData;
 import com.warfarin_app.db.DbUtil;
@@ -47,7 +45,6 @@ public class ExamDataReceiver {
 
         DbUtil.saveExamData(d);
         LogUtil.appendMsg("received: " + d.toString());
-        Log.d("app", "notify exam data received: " + d.toString());
         for (ExamDataListener r : listeners)
         {
             r.onExamDataReceived(d);
