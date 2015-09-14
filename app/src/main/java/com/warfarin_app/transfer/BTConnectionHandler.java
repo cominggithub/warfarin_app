@@ -22,6 +22,7 @@ public class BTConnectionHandler extends Thread {
     BluetoothAdapter mBluetoothAdapter;
     private TransferContext transferContext;
     private byte[] bufferredData;
+    private static int id = 0;
 
     //    private BluetoothAdapter mBluetoothAdapter;
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
@@ -60,6 +61,9 @@ public class BTConnectionHandler extends Thread {
         mBluetoothAdapter.cancelDiscovery();
         isRunning = true;
         Log.d("bt", "start connect");
+        Thread t = Thread.currentThread();
+        t.setName("BT Connection Handler " + id++);
+
         try {
             // Connect the device through the socket. This will block
             // until it succeeds or throws an exception

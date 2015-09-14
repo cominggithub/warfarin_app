@@ -36,6 +36,7 @@ public class ExamFragment extends android.support.v4.app.Fragment implements Exa
         currentExam = null;
         lastExam = null;
 
+
         return inflater.inflate(R.layout.exam, container, false);
     }
     @Override
@@ -57,6 +58,9 @@ public class ExamFragment extends android.support.v4.app.Fragment implements Exa
         tvLastExamDate = (TextView) this.getView().findViewById(R.id.exam_tvLastExamDate);
         tvLastExamResult = (TextView) this.getView().findViewById(R.id.exam_tvLastExamResult);
 
+        refresh();
+
+        Log.d("app", "Exam onActivityCreated");
     }
 
     @Override
@@ -90,7 +94,15 @@ public class ExamFragment extends android.support.v4.app.Fragment implements Exa
 
         ArrayList<ExamData> data = new ArrayList<>();
         DbUtil.loadExamHistoryWithLimit(data, 2);
-        setData(data.get(0), data.get(1));
+
+        if (data.size() == 2) {
+            setData(data.get(0), data.get(1));
+        }
+        else if(data.size() == 1)
+        {
+            setData(data.get(0), null);
+        }
+
     }
 
     public void loadExamToUI()
@@ -107,7 +119,7 @@ public class ExamFragment extends android.support.v4.app.Fragment implements Exa
             return;
 
         tvLastExamDate.setText(lastExam.getDateStr());
-        tvLastExamResult.setText("PT: " + lastExam.getPtStr() + " INR: " + lastExam.getWarfarinStr());
+        tvLastExamResult.setText("PT: " + lastExam.getPtStr() + " INR: " + lastExam.getInrStr());
 
     }
 

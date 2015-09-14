@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
 import com.warfarin_app.Patient;
@@ -27,16 +28,24 @@ public class DbUtil {
     {
         context = c;
         mDbHelper = new WarfarinDbHelper(context);
-        if (!checkDb())
+        if (!checkDataBase())
         {
+            Log.d("app", "create database");
             createDb();
         }
     }
 
-    private static boolean checkDb()
-    {
+    public static boolean checkDataBase() {
+        SQLiteDatabase checkDB = null;
+        try {
 
-        return true;
+            checkDB = SQLiteDatabase.openDatabase(WarfarinDbHelper.DATABASE_NAME, null,
+                    SQLiteDatabase.OPEN_READONLY);
+            checkDB.close();
+        } catch (SQLiteException e) {
+            // database doesn't exist yet.
+        }
+        return checkDB != null;
     }
 
     public static void deleteDb()
@@ -377,12 +386,14 @@ public class DbUtil {
 
     public static void cleanExamData()
     {
+        Log.d("app", "clean cleanExamData");
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         db.delete(ExamEntry.TABLE_NAME, null, null);
     }
 
     public static void cleanLogData()
     {
+        Log.d("app", "clean cleanLogData");
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         db.delete(LogEntry.TABLE_NAME, null, null);
 

@@ -14,7 +14,7 @@ import com.warfarin_app.util.LogUtil;
 
 public class BTManager extends Thread {
     private ExamDataReceiver examDataReceiver;
-    private boolean alive = true;
+    private boolean alive = false;
     private BluetoothDevice device;
     private static final String BLUETEH = "BOLUTEK";
     private static boolean hasData = false;
@@ -25,6 +25,7 @@ public class BTManager extends Thread {
     private static int recvExamInterval = 10000;
     private static boolean isConnected = false;
     MainActivity mainActivity;
+    private static int id = 0;
 
     public BTManager(MainActivity mainActivity)
     {
@@ -35,6 +36,9 @@ public class BTManager extends Thread {
         Log.d("bt", "bt manager start");
         LogUtil.appendMsg("Start Bluetooth Manager");
 
+        Thread t = Thread.currentThread();
+        t.setName("BT Manager " + id++);
+        alive = true;
         while(alive)
         {
 
@@ -96,7 +100,9 @@ public class BTManager extends Thread {
             }
         }
 
-        LogUtil.appendMsg("Stop Bluetooth Manager");
+
+        close();
+
     }
 
     public void startBtHandler() {
@@ -193,7 +199,15 @@ public class BTManager extends Thread {
         examDataReceiver.addExamDataListener(listener);
     }
 
+    public boolean isRunning()
+    {
+        return alive;
+    }
 
-
+    public void close()
+    {
+        alive = false;
+        LogUtil.appendMsg("Stop Bluetooth Manager");
+    }
 
 }

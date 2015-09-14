@@ -156,7 +156,9 @@ public class BTUtil {
     public static void close()
     {
         Log.d("btevt", "BTUtil close");
-        mainActivity.unregisterReceiver(mReceiver);
+        if (mainActivity != null) {
+            mainActivity.unregisterReceiver(mReceiver);
+        }
     }
     private static BluetoothDevice getDevice()
     {

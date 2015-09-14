@@ -65,10 +65,12 @@ public class HistoryFragment extends android.support.v4.app.Fragment implements 
     public void refresh()
     {
         Log.d("app", "refresh start");
+        Log.d("bt", "refresh start");
         loadExamDataFromDb();
         loadExamDataToListView();
         refreshChartData();
         Log.d("app", "refresh done");
+        Log.d("bt", "refresh done");
     }
 
     public void loadExamDataToListView()
@@ -348,6 +350,7 @@ public class HistoryFragment extends android.support.v4.app.Fragment implements 
     public void onExamDataReceived(ExamData d) {
 
         Log.d("app", "onExamDataReceived " + d.toString());
+        Log.d("bt", "onExamDataReceived " + d.toString());
         mainActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {

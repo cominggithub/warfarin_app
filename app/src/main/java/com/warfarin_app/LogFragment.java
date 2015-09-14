@@ -68,7 +68,10 @@ public class LogFragment extends android.support.v4.app.Fragment implements LogM
 //            for(int i=logList.size()-1; i>=0; i-- )
             for(int i=0; i<logList.size(); i++)
             {
-                sb.append(logList.get(i).getDataString() + " " + logList.get(i).msg + "\n");
+                sb.append(logList.get(i).getDataString());
+                sb.append(" ");
+                sb.append(logList.get(i).msg);
+                sb.append("\n");
 
             }
             tvMsg.setText(sb.toString());

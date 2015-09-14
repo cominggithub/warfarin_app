@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/imageView2"
-        android:layout_centerVertical="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:background="#ffb0faff" />
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="#ffc3ffc6">
 
     <TextView
         android:layout_width="wrap_content"
@@ -74,7 +66,7 @@
         android:layout_height="wrap_content"
         android:text="30"
         android:id="@+id/exam_tvInr"
-        android:textSize="60dp"
+        android:textSize="40dp"
         android:layout_below="@+id/exam_tvPt"
         android:layout_centerHorizontal="true"
         android:textColor="@android:color/black"
@@ -107,7 +99,6 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="PT:11 INR:50"
         android:id="@+id/exam_tvLastExamResult"
-        android:layout_alignStart="@+id/exam_tvExamDate"
         android:textColor="#ff646a6a"
         android:layout_marginTop="5dp"
         android:layout_centerHorizontal="true"
@@ -134,7 +125,7 @@
         android:editable="true"
         android:layout_marginTop="20dp"
         android:text="0"
-        android:textSize="40dp"
+        android:textSize="20dp"
         android:gravity="center_horizontal"
         android:layout_alignParentTop="false"
         android:layout_alignWithParentIfMissing="false"

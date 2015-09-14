@@ -22,7 +22,6 @@ import com.warfarin_app.util.SystemInfo;
 
 public class MainActivity extends FragmentActivity {
     private FragmentTabHost tabHost;
-    private Patient patient;
     private Context context;
 
 
@@ -34,10 +33,8 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        SystemInfo.setContext(getBaseContext());
+        Log.d("app", "MaiActivity onCreate");
         setContentView(R.layout.activity_main);
-
-
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         tabHost = (FragmentTabHost)findViewById(android.R.id.tabhost);
@@ -102,21 +99,6 @@ public class MainActivity extends FragmentActivity {
 
         init();
 
-        context = this.getApplicationContext();
-
-        DbUtil.init(context);
-        DbUtil.deleteDb();
-//        DbUtil.cleanDb();
-
-        if (SystemInfo.isBluetooth) {
-            BTUtil.setMainActivity(this);
-            if (BTUtil.hasBluetoothCapability()) {
-                btManager = new BTManager(this);
-                btManager.start();
-            }
-        }
-
-
         dumpSystemInfo();
     }
 
@@ -170,12 +152,42 @@ public class MainActivity extends FragmentActivity {
 
     private void init()
     {
-        patient = new Patient();
-        patient.setName("new name");
-        patient.setName("lod_name");
+        context = this.getApplicationContext();
+
+        SystemInfo.setContext(getBaseContext());
+
+        initDb();
+        initBt();
 
     }
 
+
+    public void initDb()
+    {
+        DbUtil.init(context);
+        DbUtil.cleanExamData();
+        DbUtil.cleanLogData();
+
+    }
+
+    public void initBt()
+    {
+        if (SystemInfo.isBluetooth) {
+            BTUtil.setMainActivity(this);
+
+            if (btManager == null)
+            {
+                btManager = new BTManager(this);
+            }
+
+            if (!btManager.isRunning()) {
+                btManager.start();
+            }
+
+//            if (BTUtil.hasBluetoothCapability()) {
+//            }
+        }
+    }
     public void addExamDataListener(ExamDataListener listener)
     {
         if (btManager != null) {
@@ -192,15 +204,18 @@ public class MainActivity extends FragmentActivity {
         {
             healthDashboardFragment.dumpPosition();
         }
-
-
     }
 
     @Override
     public void onDestroy()
     {
         super.onDestroy();
-        BTUtil.close();
+        if (SystemInfo.isBluetooth) {
+            if (btManager != null && btManager.isRunning() == true) {
+                btManager.close();
+            }
+            BTUtil.close();
+        }
     }
 
 

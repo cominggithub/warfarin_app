@@ -8,7 +8,7 @@ import java.util.Locale;
  * Created by Coming on 9/10/15.
  */
 public class SystemInfo {
-    public static boolean isBluetooth = false;
+    public static boolean isBluetooth = true;
 
     private static Context context;
 
