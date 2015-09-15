@@ -92,7 +92,7 @@ public class BTConnectionHandler extends Thread {
                 }
                 else
                 {
-                    Log.d("bt", "null exam data");
+                    Log.d("bt", "BT Connection handler gets null exam data");
                     isRunning = false;
                 }
             }

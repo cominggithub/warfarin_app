@@ -151,13 +151,14 @@ public class BTManager extends Thread {
     public ExamData recvExamData()
     {
 
-        Log.d("bt", "wait sync data\n");
+        Log.d("bt", "wait dataReadSignal\n");
         synchronized (dataReadSignal)
         {
             try
             {
-                dataReadSignal.wait(recvExamInterval);
                 Log.d("bt", "wait sync data\n");
+                dataReadSignal.wait(recvExamInterval);
+
                 if (dataReadSignal.hasDataToProcess) {
                     dataReadSignal.setHasDataToProcess(false);
                     return btConnectionHandler.getExamData();

@@ -62,6 +62,7 @@ public class SocketTransceiver {
         try {
             while(cumReadCnt < length)
             {
+                Log.d("bt", "read cumReadCnt " + cumReadCnt + ", required length: " + length);
                 readCnt = is.read(localBuf, 0, length-cumReadCnt);
                 for (i = 0; i < readCnt && i + cumReadCnt < length; i++) {
 

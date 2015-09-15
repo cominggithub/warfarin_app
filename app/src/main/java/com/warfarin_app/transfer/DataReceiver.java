@@ -137,17 +137,18 @@ public class DataReceiver {
                 alive = false;
             }
 
-            try
-            {
-                if (socket == null || !socket.isConnected() || socket.getInputStream() == null || socket.getOutputStream() == null)
-                {
-                    alive = false;
-                }
-            }catch (IOException e)
-            {
-                Log.e("bt", "exception", e);
-                alive = false;
-            }
+//            try
+//            {
+//                if (socket == null || !socket.isConnected() || socket.getInputStream() == null || socket.getOutputStream() == null)
+//                {
+//                    Log.d("bt", "check bt socket failed");
+//                    alive = false;
+//                }
+//            }catch (IOException e)
+//            {
+//                Log.e("bt", "exception", e);
+//                alive = false;
+//            }
 
         }
 
@@ -187,8 +188,14 @@ public class DataReceiver {
         b = new byte[4];
         skipToPrefix();
 
-        if (SocketTransceiver.read(is, b, 4) == -1)
+        try {
+            if (SocketTransceiver.read(socket.getInputStream(), b, 4) == -1) {
+                alive = false;
+                return "";
+            }
+        }catch(Exception e)
         {
+            Log.e("bt", "exception", e);
             alive = false;
             return "";
         }

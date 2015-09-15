@@ -12,7 +12,7 @@
         android:ellipsize="marquee"
         android:singleLine="true"
         android:text="HH:mm:ss"
-        android:textSize="12dp"
+        android:textSize="20dp"
         android:textColor="#000000"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/exam_list_entry_tvDate" />
@@ -25,7 +25,7 @@
         android:layout_alignWithParentIfMissing="true"
         android:gravity="center_vertical"
         android:text="2015/8/1"
-        android:textSize="16sp"
+        android:textSize="20dp"
         android:textColor="#000000"
         android:layout_alignParentBottom="false"
         android:layout_alignParentLeft="true" />
@@ -37,10 +37,10 @@
         android:id="@+id/textView25"
         android:layout_alignParentLeft="false"
         android:layout_alignParentStart="false"
-        android:textSize="10dp"
+        android:textSize="14dp"
         android:layout_alignTop="@+id/exam_list_entry_tvPt"
         android:layout_toLeftOf="@+id/exam_list_entry_tvPt"
-        android:layout_marginRight="0dp"
+        android:layout_marginRight="10dp"
         android:textColor="@android:color/holo_orange_dark" />
 
     <TextView
@@ -48,7 +48,7 @@
         android:layout_height="wrap_content"
         android:text="20"
         android:id="@+id/exam_list_entry_tvPt"
-        android:textSize="20dp"
+        android:textSize="40dp"
         android:layout_alignParentTop="false"
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@+id/textView26"
@@ -61,10 +61,10 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="INR"
         android:id="@+id/textView26"
-        android:textSize="10dp"
+        android:textSize="14dp"
         android:layout_alignTop="@+id/exam_list_entry_tvInr"
         android:layout_toLeftOf="@+id/exam_list_entry_tvInr"
-        android:layout_marginRight="5dp"
+        android:layout_marginRight="10dp"
         android:textColor="@android:color/holo_orange_dark" />
 
     <TextView
@@ -72,7 +72,7 @@
         android:layout_height="wrap_content"
         android:text="30"
         android:id="@+id/exam_list_entry_tvInr"
-        android:textSize="20dp"
+        android:textSize="40dp"
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@+id/textView28"
         android:layout_marginRight="10dp"
@@ -84,10 +84,10 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Warfarin"
         android:id="@+id/textView28"
-        android:textSize="10dp"
+        android:textSize="14dp"
         android:layout_toLeftOf="@+id/exam_list_entry_tvWarfarin"
         android:layout_alignTop="@+id/exam_list_entry_tvWarfarin"
-        android:layout_marginRight="5dp"
+        android:layout_marginRight="10dp"
         android:textColor="@android:color/holo_orange_dark" />
 
     <TextView
@@ -95,7 +95,7 @@
         android:layout_height="wrap_content"
         android:text="30"
         android:id="@+id/exam_list_entry_tvWarfarin"
-        android:textSize="20dp"
+        android:textSize="40dp"
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
         android:layout_marginRight="10dp"

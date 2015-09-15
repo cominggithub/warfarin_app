@@ -143,6 +143,7 @@ public class HistoryFragment extends android.support.v4.app.Fragment implements 
 //        llXAxis.setTextSize(10f);
 
         XAxis xAxis = mChart.getXAxis();
+        xAxis.setTextSize(20);
 //        xAxis.addLimitLine(llXAxis);
 
 //        LimitLine ll1 = new LimitLine(130f, "Upper Limit");
@@ -166,6 +167,7 @@ public class HistoryFragment extends android.support.v4.app.Fragment implements 
         leftAxis.setStartAtZero(false);
         //leftAxis.setYOffset(20f);
         leftAxis.enableGridDashedLine(10f, 10f, 0f);
+        leftAxis.setTextSize(20);
 
         // limit lines are drawn behind data (and not on top)
 //        leftAxis.setDrawLimitLinesBehindData(true);
@@ -219,12 +221,12 @@ public class HistoryFragment extends android.support.v4.app.Fragment implements 
 
         // set the line to be drawn like this "- - - - - -"
         ptSet.enableDashedLine(10f, 5f, 0f);
-        ptSet.setColor(Color.YELLOW);
-        ptSet.setCircleColor(Color.YELLOW);
-        ptSet.setLineWidth(1f);
-        ptSet.setCircleSize(3f);
+        ptSet.setColor(Color.GREEN);
+        ptSet.setCircleColor(Color.GREEN);
+        ptSet.setLineWidth(3f);
+        ptSet.setCircleSize(6f);
         ptSet.setDrawCircleHole(false);
-        ptSet.setValueTextSize(9f);
+        ptSet.setValueTextSize(20f);
         ptSet.setFillAlpha(65);
         ptSet.setFillColor(Color.BLACK);
 
@@ -245,10 +247,10 @@ public class HistoryFragment extends android.support.v4.app.Fragment implements 
         inrSet.enableDashedLine(10f, 5f, 0f);
         inrSet.setColor(Color.BLUE);
         inrSet.setCircleColor(Color.BLUE);
-        inrSet.setLineWidth(1f);
-        inrSet.setCircleSize(3f);
+        inrSet.setLineWidth(3f);
+        inrSet.setCircleSize(6f);
         inrSet.setDrawCircleHole(false);
-        inrSet.setValueTextSize(9f);
+        inrSet.setValueTextSize(20f);
         inrSet.setFillAlpha(65);
         inrSet.setFillColor(Color.BLACK);
 
@@ -269,10 +271,10 @@ public class HistoryFragment extends android.support.v4.app.Fragment implements 
         warfarinSet.enableDashedLine(10f, 5f, 0f);
         warfarinSet.setColor(Color.RED);
         warfarinSet.setCircleColor(Color.RED);
-        warfarinSet.setLineWidth(1f);
-        warfarinSet.setCircleSize(3f);
+        warfarinSet.setLineWidth(3f);
+        warfarinSet.setCircleSize(6f);
         warfarinSet.setDrawCircleHole(false);
-        warfarinSet.setValueTextSize(9f);
+        warfarinSet.setValueTextSize(20f);
         warfarinSet.setFillAlpha(65);
         warfarinSet.setFillColor(Color.BLACK);
 

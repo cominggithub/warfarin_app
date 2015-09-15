@@ -10,7 +10,7 @@
         android:text="最近一次的檢查結果"
         android:id="@+id/textView"
         android:layout_marginTop="20dp"
-        android:textSize="30dp"
+        android:textSize="50dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:textColor="@android:color/background_dark" />
@@ -22,8 +22,8 @@
         android:id="@+id/exam_tvExamDate"
         android:layout_below="@+id/textView"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="5dp"
-        android:textSize="20dp"
+        android:layout_marginTop="40dp"
+        android:textSize="30dp"
         android:textColor="#ff000000" />
 
     <TextView
@@ -31,34 +31,34 @@
         android:layout_height="wrap_content"
         android:text="PT: "
         android:id="@+id/textView2"
-        android:textSize="20dp"
+        android:textSize="30dp"
         android:textColor="@android:color/black"
         android:layout_alignTop="@+id/exam_tvPt"
         android:layout_toLeftOf="@+id/exam_tvPt"
         android:layout_marginRight="30dp"
-        android:layout_marginTop="10dp" />
+        android:layout_marginTop="30dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="INR: "
         android:id="@+id/textView3"
-        android:textSize="20dp"
+        android:textSize="30dp"
         android:layout_centerVertical="true"
         android:textColor="@android:color/black"
         android:layout_alignRight="@+id/textView2"
         android:layout_alignTop="@+id/exam_tvInr"
-        android:layout_marginTop="20dp" />
+        android:layout_marginTop="30dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="20"
         android:id="@+id/exam_tvPt"
-        android:textSize="40dp"
+        android:textSize="80dp"
         android:textColor="@android:color/black"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="20dp"
         android:layout_below="@+id/exam_tvExamDate" />
 
     <TextView
@@ -66,32 +66,33 @@
         android:layout_height="wrap_content"
         android:text="30"
         android:id="@+id/exam_tvInr"
-        android:textSize="40dp"
+        android:textSize="80dp"
         android:layout_below="@+id/exam_tvPt"
         android:layout_centerHorizontal="true"
         android:textColor="@android:color/black"
-        android:layout_marginTop="5dp" />
+        android:layout_marginTop="20dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="前一次檢查結果"
         android:id="@+id/textView6"
-        android:textSize="30dp"
+        android:textSize="50dp"
         android:layout_below="@+id/exam_tvInr"
         android:layout_centerHorizontal="true"
         android:textColor="#ff646a6a"
-        android:layout_marginTop="10dp" />
+        android:layout_marginTop="30dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="日期 : 2015/1/2"
         android:id="@+id/exam_tvLastExamDate"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         android:layout_below="@+id/textView6"
         android:layout_centerHorizontal="true"
-        android:textColor="#ff646a6a" />
+        android:textColor="#ff646a6a"
+        android:textSize="30dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -100,21 +101,23 @@
         android:text="PT:11 INR:50"
         android:id="@+id/exam_tvLastExamResult"
         android:textColor="#ff646a6a"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/exam_tvLastExamDate" />
+        android:layout_below="@+id/exam_tvLastExamDate"
+        android:textSize="40dp" />
 
     <TextView
-        android:layout_width="80dp"
-        android:layout_height="50dp"
-        android:text="Warfarin 劑量："
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Warfarin \n 劑量："
         android:id="@+id/textView9"
-        android:textSize="20dp"
+        android:textSize="30dp"
         android:textColor="@android:color/black"
         android:gravity="right"
         android:layout_toLeftOf="@+id/exam_etWarfarin"
         android:layout_alignBottom="@+id/exam_etWarfarin"
-        android:layout_marginRight="5dp" />
+        android:layout_marginRight="30dp"
+        android:textAlignment="gravity" />
 
     <EditText
         android:layout_width="100dp"
@@ -125,7 +128,7 @@
         android:editable="true"
         android:layout_marginTop="20dp"
         android:text="0"
-        android:textSize="20dp"
+        android:textSize="80dp"
         android:gravity="center_horizontal"
         android:layout_alignParentTop="false"
         android:layout_alignWithParentIfMissing="false"
