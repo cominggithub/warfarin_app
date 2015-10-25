@@ -12,6 +12,8 @@ public class PatientEntry implements BaseColumns {
     public static final String COLUMN_NAME_BIRTHDAY = "birthday";
     public static final String COLUMN_NAME_IS_WARFARIN = "is_warfarin";
     public static final String COLUMN_NAME_DOCTOR = "doctor";
+    public static final String COLUMN_NAME_BLUEDEV_NAME = "bluedev_name";
+    public static final String COLUMN_NAME_BLUEDEV_ADDRESS = "bluedev_address";
 
     private static final String TEXT_TYPE = " TEXT";
     private static final String INTEGER_TYPE = " INTEGER";
@@ -24,7 +26,9 @@ public class PatientEntry implements BaseColumns {
                     COLUMN_NAME_GENDER + INTEGER_TYPE + COMMA_SEP +
                     COLUMN_NAME_BIRTHDAY + TEXT_TYPE + COMMA_SEP +
                     COLUMN_NAME_IS_WARFARIN + INTEGER_TYPE + COMMA_SEP +
-                    COLUMN_NAME_DOCTOR + TEXT_TYPE +
+                    COLUMN_NAME_DOCTOR + TEXT_TYPE  + COMMA_SEP +
+                    COLUMN_NAME_BLUEDEV_NAME + TEXT_TYPE  + COMMA_SEP +
+                    COLUMN_NAME_BLUEDEV_ADDRESS + TEXT_TYPE +
 
                     " )";
 

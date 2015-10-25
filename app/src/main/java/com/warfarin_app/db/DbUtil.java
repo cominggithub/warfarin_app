@@ -4,12 +4,11 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
-import com.warfarin_app.Patient;
 import com.warfarin_app.data.ExamData;
 import com.warfarin_app.data.LogData;
+import com.warfarin_app.data.Patient;
 
 import java.util.ArrayList;
 
@@ -20,7 +19,6 @@ import java.util.ArrayList;
  */
 public class DbUtil {
 
-    private static WarfarinDbHelper patientDbHelper;
     private static Context context;
     private static WarfarinDbHelper mDbHelper;
 
@@ -28,11 +26,11 @@ public class DbUtil {
     {
         context = c;
         mDbHelper = new WarfarinDbHelper(context);
-        if (!checkDataBase())
-        {
-            Log.d("app", "create database");
-            createDb();
-        }
+//        if (!checkDataBase())
+//        {
+//            Log.d("app", "create database");
+//            createDb();
+//        }
     }
 
     public static boolean checkDataBase() {
@@ -42,9 +40,10 @@ public class DbUtil {
             checkDB = SQLiteDatabase.openDatabase(WarfarinDbHelper.DATABASE_NAME, null,
                     SQLiteDatabase.OPEN_READONLY);
             checkDB.close();
-        } catch (SQLiteException e) {
+        } catch (Exception e) {
             // database doesn't exist yet.
         }
+
         return checkDB != null;
     }
 
@@ -70,6 +69,8 @@ public class DbUtil {
         values.put(PatientEntry.COLUMN_NAME_IS_WARFARIN, patient.getIsWarfarin() ? 1 : 0);
         values.put(PatientEntry.COLUMN_NAME_GENDER, patient.getGender() ? 1 : 0);
         values.put(PatientEntry.COLUMN_NAME_DOCTOR, patient.getDoctor());
+        values.put(PatientEntry.COLUMN_NAME_BLUEDEV_NAME, patient.getBlueDevName());
+        values.put(PatientEntry.COLUMN_NAME_BLUEDEV_ADDRESS, patient.getBlueDevAddress());
 
 // Insert the new row, returning the primary key value of the new row
         long newRowId = -1;
@@ -111,6 +112,9 @@ public class DbUtil {
                 PatientEntry.COLUMN_NAME_BIRTHDAY,
                 PatientEntry.COLUMN_NAME_DOCTOR,
                 PatientEntry.COLUMN_NAME_IS_WARFARIN,
+                PatientEntry.COLUMN_NAME_BLUEDEV_NAME,
+                PatientEntry.COLUMN_NAME_BLUEDEV_ADDRESS
+
         };
 
         String[] where = {
@@ -151,6 +155,8 @@ public class DbUtil {
         patient.setBirthday(cursor.getString(cursor.getColumnIndexOrThrow(PatientEntry.COLUMN_NAME_BIRTHDAY)));
         patient.setDoctor(cursor.getString(cursor.getColumnIndexOrThrow(PatientEntry.COLUMN_NAME_DOCTOR)));
         patient.setIsWarfarin(cursor.getInt(cursor.getColumnIndexOrThrow(PatientEntry.COLUMN_NAME_IS_WARFARIN)) == 1);
+        patient.setBlueDevName(cursor.getString(cursor.getColumnIndexOrThrow(PatientEntry.COLUMN_NAME_BLUEDEV_NAME)));
+        patient.setBlueDevAddress(cursor.getString(cursor.getColumnIndexOrThrow(PatientEntry.COLUMN_NAME_BLUEDEV_ADDRESS)));
 
         return true;
     }

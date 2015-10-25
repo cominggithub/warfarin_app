@@ -1,4 +1,4 @@
-package com.warfarin_app;
+package com.warfarin_app.view;
 
 
 import android.content.Context;
@@ -14,6 +14,8 @@ import android.view.Display;
 import android.view.View;
 import android.widget.TextView;
 
+import com.warfarin_app.R;
+import com.warfarin_app.data.Patient;
 import com.warfarin_app.db.DbUtil;
 import com.warfarin_app.transfer.BTManager;
 import com.warfarin_app.transfer.BTUtil;
@@ -27,7 +29,7 @@ public class MainActivity extends FragmentActivity {
 
     private HealthDashboardFragment healthDashboardFragment;
     private BTManager btManager;
-
+    private Patient patient;
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,33 +47,38 @@ public class MainActivity extends FragmentActivity {
 
         //1
 
+//        tabHost.addTab(tabHost.newTabSpec("Bluetooth")
+//                        .setIndicator("藍芽設定"),
+//                BlueDevListFragment.class,
+//                null);
+
         tabHost.addTab(tabHost.newTabSpec("User")
-                        .setIndicator("User"),
+                        .setIndicator("使用者資料"),
                 PatientFragment.class,
                 null);
 
         tabHost.addTab(tabHost.newTabSpec("Exam")
-                        .setIndicator("Exam"),
+                        .setIndicator("檢測結果"),
                 ExamFragment.class,
                 null);
 
         tabHost.addTab(tabHost.newTabSpec("Health Dashboard")
-                        .setIndicator("Health Dashboard"),
+                        .setIndicator("健康指南"),
                 HealthDashboardFragment.class,
                 null);
 
         tabHost.addTab(tabHost.newTabSpec("Food Guide")
-                        .setIndicator("Food Guide"),
+                        .setIndicator("飲食指南"),
                 FoodGuideFragment.class,
                 null);
 
         tabHost.addTab(tabHost.newTabSpec("History")
-                        .setIndicator("History"),
+                        .setIndicator("歷史記錄"),
                 HistoryFragment.class,
                 null);
 
         tabHost.addTab(tabHost.newTabSpec("Log")
-                        .setIndicator("Log"),
+                        .setIndicator("除錯"),
                 LogFragment.class,
                 null);
 
@@ -155,10 +162,8 @@ public class MainActivity extends FragmentActivity {
         context = this.getApplicationContext();
 
         SystemInfo.setContext(getBaseContext());
-
         initDb();
         initBt();
-
     }
 
 
@@ -167,27 +172,32 @@ public class MainActivity extends FragmentActivity {
         DbUtil.init(context);
         DbUtil.cleanExamData();
         DbUtil.cleanLogData();
-
+        DbUtil.loadPatient(patient);
     }
 
     public void initBt()
     {
+
+        if (Build.FINGERPRINT.startsWith("generic"))
+        {
+            SystemInfo.isBluetooth = false;
+        }
         if (SystemInfo.isBluetooth) {
             BTUtil.setMainActivity(this);
 
             if (btManager == null)
             {
-                btManager = new BTManager(this);
+                btManager = BTManager.getInstance(this);
             }
+
+            BTManager.setDeviceByAddress(patient.getBlueDevAddress());
 
             if (!btManager.isRunning()) {
                 btManager.start();
             }
-
-//            if (BTUtil.hasBluetoothCapability()) {
-//            }
         }
     }
+
     public void addExamDataListener(ExamDataListener listener)
     {
         if (btManager != null) {
@@ -200,10 +210,6 @@ public class MainActivity extends FragmentActivity {
         // TODO Auto-generated method stub
 
         super.onWindowFocusChanged(hasFocus);
-        if (healthDashboardFragment != null)
-        {
-            healthDashboardFragment.dumpPosition();
-        }
     }
 
     @Override
@@ -217,8 +223,4 @@ public class MainActivity extends FragmentActivity {
             BTUtil.close();
         }
     }
-
-
-
-
 }

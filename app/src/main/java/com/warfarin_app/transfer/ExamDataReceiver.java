@@ -6,7 +6,7 @@ package com.warfarin_app.transfer;
 
 import android.util.Log;
 
-import com.warfarin_app.LogMsgConsumer;
+import com.warfarin_app.view.LogMsgConsumer;
 import com.warfarin_app.data.ExamData;
 import com.warfarin_app.db.DbUtil;
 import com.warfarin_app.util.LogUtil;

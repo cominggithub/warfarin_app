@@ -1,4 +1,4 @@
-package com.warfarin_app;
+package com.warfarin_app.data;
 
 /**
  * Created by Coming on 8/9/15.
@@ -10,11 +10,11 @@ import android.content.SharedPreferences;
 public class Patient {
 
 
-    public final static String PRE_USER_NAME = "PRE_USER_NAME";
-    public final static String PRE_IS_MALE   = "PRE_IS_MALE";
-    public final static String PRE_BIRTHDAY   = "PRE_BIRTHDAY";
-    public final static String PRE_DOCTOR   = "PRE_DOCTOR";
-    public final static String PRE_IS_WARFARIN   = "PRE_IS_WARFARIN";
+//    public final static String PRE_USER_NAME = "PRE_USER_NAME";
+//    public final static String PRE_IS_MALE   = "PRE_IS_MALE";
+//    public final static String PRE_BIRTHDAY   = "PRE_BIRTHDAY";
+//    public final static String PRE_DOCTOR   = "PRE_DOCTOR";
+//    public final static String PRE_IS_WARFARIN   = "PRE_IS_WARFARIN";
 
 
     private long id = -1;
@@ -23,6 +23,9 @@ public class Patient {
     private String birthday = "";
     private String doctor = "";
     private boolean isWarfarin = false;
+    private String bluedev_name = "";
+    private String bluedev_address = "";
+
     SharedPreferences sharedPref;
     Activity activity = null;
 
@@ -116,4 +119,25 @@ public class Patient {
     {
         this.id = id;
     }
+
+    public void setBlueDevName(String name)
+    {
+        this.bluedev_name = name;
+    }
+
+    public String getBlueDevName()
+    {
+        return this.bluedev_name;
+    }
+
+    public void setBlueDevAddress(String address)
+    {
+        this.bluedev_address = address;
+    }
+
+    public String getBlueDevAddress()
+    {
+        return this.bluedev_address;
+    }
+
 }

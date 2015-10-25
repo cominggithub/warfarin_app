@@ -1,4 +1,4 @@
-package com.warfarin_app;
+package com.warfarin_app.view;
 
 /**
  * Created by Coming on 8/19/15.

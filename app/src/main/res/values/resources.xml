@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="myDialog" parent="Theme.AppCompat.Dialog">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:background">@android:color/holo_blue_dark</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:typeface">monospace</item>
+
+    </style>
+
+    <!--<style name="myDialog" parent="android:style/Theme.Dialog">-->
+        <!--<item name="android:windowNoTitle">true</item>-->
+    <!--</style>-->
+
+</resources>

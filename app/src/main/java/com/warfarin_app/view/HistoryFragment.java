@@ -1,4 +1,4 @@
-package com.warfarin_app;
+package com.warfarin_app.view;
 
 import android.app.Activity;
 import android.graphics.Color;
@@ -18,6 +18,7 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.warfarin_app.R;
 import com.warfarin_app.data.ExamData;
 import com.warfarin_app.db.DbUtil;
 import com.warfarin_app.transfer.ExamDataListener;
@@ -107,6 +108,7 @@ public class HistoryFragment extends android.support.v4.app.Fragment implements 
         listview.setAdapter(null);
         listview.setAdapter(adapter);
     }
+
 
     public void loadExamDataFromDb()
     {

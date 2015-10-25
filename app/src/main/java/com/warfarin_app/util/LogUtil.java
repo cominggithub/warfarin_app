@@ -1,6 +1,6 @@
 package com.warfarin_app.util;
 
-import com.warfarin_app.LogMsgConsumer;
+import com.warfarin_app.view.LogMsgConsumer;
 import com.warfarin_app.data.LogData;
 import com.warfarin_app.db.DbUtil;
 

@@ -167,12 +167,12 @@
     <RadioGroup
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/textView14"
         android:id="@+id/patient_rgIsWarfarin"
         android:layout_marginTop="25dp"
         android:layout_below="@+id/patient_etDoctor"
         android:orientation="horizontal"
-        android:layout_alignStart="@id/patient_etName">
+        android:layout_alignStart="@id/patient_etName"
+        android:layout_alignLeft="@+id/patient_etName">
 
         <!--<LinearLayout-->
             <!--android:layout_width="match_parent"-->
@@ -223,6 +223,36 @@
         android:layout_marginTop="40dp"
         android:textSize="70dp"
         android:textColor="@android:color/background_dark" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/editText"
+        android:layout_marginTop="30dp"
+        android:text="藍芽裝置"
+        android:textSize="30dp"
+        android:layout_below="@+id/textView14"
+        android:layout_alignRight="@+id/textView10"
+        android:layout_alignEnd="@+id/textView12"
+        android:textColor="@android:color/background_dark" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/patient_etBlueDevName"
+        android:text="BLUETEH (11:22:33:44:55:66)"
+        android:textSize="18dp"
+        android:layout_alignBottom="@+id/editText"
+        android:layout_alignLeft="@+id/patient_etName"
+        android:layout_alignStart="@+id/patient_etName" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="設定"
+        android:id="@+id/patient_btSetBlueDev"
+        android:layout_alignTop="@+id/patient_etBlueDevName"
+        android:layout_toRightOf="@+id/patient_etBlueDevName" />
 
 
 </RelativeLayout>

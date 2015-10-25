@@ -1,9 +1,11 @@
-package com.warfarin_app;
+package com.warfarin_app.view;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.warfarin_app.R;
 
 /**
  * Created by Coming on 8/5/15.

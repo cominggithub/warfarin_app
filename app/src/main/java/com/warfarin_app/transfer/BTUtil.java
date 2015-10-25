@@ -2,17 +2,16 @@ package com.warfarin_app.transfer;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Build;
 import android.util.Log;
 
-import com.warfarin_app.MainActivity;
 import com.warfarin_app.util.LogUtil;
+import com.warfarin_app.util.SystemInfo;
+import com.warfarin_app.view.MainActivity;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -24,43 +23,44 @@ public class BTUtil {
     private static MainActivity mainActivity;
     private static Vector<BluetoothAdapter> mArrayAdapter = new Vector<BluetoothAdapter>();
     private static boolean isConnected = false;
-    private static BluetoothDevice device;
+//    private static BluetoothDevice device;
+//    private static String deviceAddress = "11:22:33:44:55:66";
 
     public static void setMainActivity(MainActivity activity)
     {
         mainActivity = activity;
-        init();
     }
-    public static BluetoothDevice scan_device(String name)
-    {
-        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        Log.d("bt", "scan paired Bluetooth device \"" + name + "\"");
-        LogUtil.appendMsg("scan paired Bluetooth device \"" + name + "\"");
-                requestBluetoothPermission();
-
-        Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
-        if (pairedDevices.size() > 0) {
-            // Loop through paired devices
-            for (BluetoothDevice device : pairedDevices) {
-                Log.d("bt", "found paired Bluetooth device " + device.getName() + ", " + device.getAddress());
-                LogUtil.appendMsg("found paired Bluetooth device " + device.getName() + ", " + device.getAddress());
-                if (device.getName().equals(name))
-                {
-                    LogUtil.appendMsg("use Bluetooth device " + device.getName() + ", " + device.getAddress());
-                    Log.d("bt", "use paired Bluetooth device " + device.getName() + ", " + device.getAddress());
-                    setDevice(device);
-                    return device;
-                }
-            }
-        }
-        else
-        {
-            LogUtil.appendMsg("no Bluetooth device found, please pair Bluetooth device before using this APP");
-        }
-
-        return null;
-    }
+//    public static BluetoothDevice scan_device()
+//    {
+//        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+//
+//        Log.d("bt", "scan paired Bluetooth device \"" + deviceAddress + "\"");
+//        LogUtil.appendMsg("scan paired Bluetooth device \"" + deviceAddress + "\"");
+//                requestBluetoothPermission();
+//
+//        Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+//        if (pairedDevices.size() > 0) {
+//            // Loop through paired devices
+//            for (BluetoothDevice device : pairedDevices) {
+//                Log.d("bt", "found paired Bluetooth device " + device.getName() + ", " + device.getAddress());
+//                LogUtil.appendMsg("found paired Bluetooth device " + device.getName() + ", " + device.getAddress());
+//                if (device.getAddress().equals(deviceAddress))
+//                {
+//                    LogUtil.appendMsg("use Bluetooth device " + device.getName() + ", " + device.getAddress());
+//                    Log.d("bt", "use paired Bluetooth device " + device.getName() + ", " + device.getAddress());
+//                    setDevice(device);
+//                    return device;
+//                }
+//            }
+//        }
+//        else
+//        {
+//            LogUtil.appendMsg("no Bluetooth device found, please pair Bluetooth device before using this APP");
+//        }
+//
+//        return null;
+//    }
 
     public static void requestBluetoothPermission()
     {
@@ -102,80 +102,98 @@ public class BTUtil {
         return true;
     }
 
-    private static final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-
-            Log.d("btevt", "BT event");
-            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                LogUtil.appendMsg("found Bluetooth device " + device.getName() + ", " + device.getAddress());
-                Log.d("btevt", "found Bluetooth device " + device.getName() + ", " + device.getAddress());
-
-            }
-            else if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
-                LogUtil.appendMsg(device.getName() + " " + device.getAddress() + " connect");
-                Log.d("btevt", device.getName() + " " + device.getAddress() + " connect");
-                isConnected = true;
-
-            }
-            else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-                Log.d("btevt", device.getName() + " " + device.getAddress() + " discovery finished");
-
-            }
-            else if (BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED.equals(action)) {
-                Log.d("btevt", "disconnect requested " + device.getAddress());
-
-            }
-            else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
-                LogUtil.appendMsg(device.getName() + " " + device.getAddress() + " disconnect");
-                Log.d("btevt", device.getName() + " " + device.getAddress() + " disconnect");
-                if (getDevice() == device) {
-                    setDevice(null);
-                    isConnected = false;
-                }
-
-            }
-        }
-    };
-
-    public static void init()
+    public static List<BluetoothDevice> getPairedDevice()
     {
-        Log.d("btevt", "BTUtil init");
-        IntentFilter filter1 = new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED);
-        IntentFilter filter2 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
-        IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
-        IntentFilter filter4 = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        mainActivity.registerReceiver(mReceiver, filter1);
-        mainActivity.registerReceiver(mReceiver, filter2);
-        mainActivity.registerReceiver(mReceiver, filter3);
-        mainActivity.registerReceiver(mReceiver, filter4);
+        ArrayList<BluetoothDevice> devices = new ArrayList<>();
+        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (SystemInfo.isBluetooth) {
+            requestBluetoothPermission();
+            devices.addAll(mBluetoothAdapter.getBondedDevices());
+        }
+
+
+        return devices;
     }
+
 
     public static void close()
     {
-        Log.d("btevt", "BTUtil close");
-        if (mainActivity != null) {
-            mainActivity.unregisterReceiver(mReceiver);
-        }
+
     }
-    private static BluetoothDevice getDevice()
-    {
-        return BTUtil.device;
-    }
+
+//    private static BluetoothDevice getDevice()
+//    {
+//        return BTUtil.device;
+//    }
 
     public static boolean isConnected()
     {
         return isConnected;
     }
-    private static void setDevice(BluetoothDevice d) {
-        device = d;
+
+//    private static void setDevice(BluetoothDevice d) {
+//        device = d;
+//        deviceAddress = device.getAddress();
+//    }
+
+//    public static boolean setDeviceByAddress(String address)
+//    {
+//        if (SystemInfo.isBluetooth)
+//        {
+//            BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+//            for(BluetoothDevice device: mBluetoothAdapter.getBondedDevices())
+//            {
+//                if (device.getAddress().equals(address))
+//                {
+//                    setDevice(device);
+//                    return true;
+//                }
+//            }
+//            return false;
+//        }
+//        else
+//        {
+//            deviceAddress = address;
+//        }
+//        return true;
+//
+//    }
+
+//    public static boolean isConnectedDevice(String mac)
+//    {
+//        if (mac.equals(deviceAddress))
+//        {
+//            return true;
+//        }
+//        return false;
+//    }
+
+    public static String getAddressFromNameAddress(String nameAddress)
+    {
+        return nameAddress.substring(nameAddress.indexOf(" ")+1);
     }
 
+    public static String getNameFromNameAddress(String nameAddress)
+    {
+        return nameAddress.substring(0, nameAddress.indexOf(" "));
+    }
 //    public static void destroy()
 //    {
 //        mainActivity.unregisterReceiver(mReceiver);
 //    }
+
+    public static BluetoothDevice getDeviceByAddress(String address)
+    {
+        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        for(BluetoothDevice device: mBluetoothAdapter.getBondedDevices())
+        {
+            if (device.getAddress().equals(address))
+            {
+                return device;
+            }
+        }
+
+        return null;
+    }
 
 }

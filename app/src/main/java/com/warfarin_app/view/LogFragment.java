@@ -1,4 +1,4 @@
-package com.warfarin_app;
+package com.warfarin_app.view;
 
 import android.app.Activity;
 import android.graphics.Color;
@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.warfarin_app.R;
 import com.warfarin_app.data.LogData;
 import com.warfarin_app.db.DbUtil;
 import com.warfarin_app.util.LogUtil;

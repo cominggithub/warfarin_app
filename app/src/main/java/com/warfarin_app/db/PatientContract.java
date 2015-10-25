@@ -1,4 +1,4 @@
-package com.warfarin_app;
+package com.warfarin_app.db;
 
 
 import android.provider.BaseColumns;

@@ -1,4 +1,4 @@
-package com.warfarin_app;
+package com.warfarin_app.view;
 
 
 import android.app.Activity;
@@ -11,6 +11,7 @@ import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.warfarin_app.R;
 import com.warfarin_app.data.ExamData;
 import com.warfarin_app.data.Margin;
 import com.warfarin_app.db.DbUtil;

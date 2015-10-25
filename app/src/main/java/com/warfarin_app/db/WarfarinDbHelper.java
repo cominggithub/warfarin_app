@@ -16,9 +16,10 @@ public class WarfarinDbHelper extends SQLiteOpenHelper {
     public WarfarinDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
+
     public void onCreate(SQLiteDatabase db) {
 
-        Log.d("app", "create database");
+        Log.d("app", "dbhelper create database");
         db.execSQL(PatientEntry.SQL_CREATE_ENTRIES);
         db.execSQL(ExamEntry.SQL_CREATE_ENTRIES);
         db.execSQL(LogEntry.SQL_CREATE_ENTRIES);
@@ -26,15 +27,12 @@ public class WarfarinDbHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // This database is only a cache for online data, so its upgrade policy is
         // to simply to discard the data and start over
+        Log.d("app", "dbhelper upgrade database");
         Log.d("app", PatientEntry.SQL_DELETE_ENTRIES);
         db.execSQL(PatientEntry.SQL_DELETE_ENTRIES);
         db.execSQL(ExamEntry.SQL_DELETE_ENTRIES);
         db.execSQL(LogEntry.SQL_DELETE_ENTRIES);
         onCreate(db);
-
-
-
-
     }
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         onUpgrade(db, oldVersion, newVersion);

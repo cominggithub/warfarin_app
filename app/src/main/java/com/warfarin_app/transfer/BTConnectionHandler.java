@@ -8,11 +8,13 @@ import android.util.Log;
 import com.warfarin_app.data.ExamData;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 /**
  * Created by Coming on 8/25/15.
  */
+
 public class BTConnectionHandler extends Thread {
     private final BluetoothDevice mmDevice;
     private final BluetoothSocket mmSocket;
@@ -23,6 +25,8 @@ public class BTConnectionHandler extends Thread {
     private TransferContext transferContext;
     private byte[] bufferredData;
     private static int id = 0;
+
+    private List<ExamData> examDataQueue;
 
     //    private BluetoothAdapter mBluetoothAdapter;
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
@@ -37,12 +41,11 @@ public class BTConnectionHandler extends Thread {
         mmDevice = device;
         mBluetoothAdapter = bleAdapter;
 
-
         // Get a BluetoothSocket to connect with the given BluetoothDevice
         try {
             // MY_UUID is the app's UUID string, also used by the server code
             tmp = device.createRfcommSocketToServiceRecord(MY_UUID);
-//            tmp = device.createRfcommSocketToServiceRecord(null);
+
         } catch (IOException e) {
             Log.e("bt", "exception", e);
             stopRunning();
@@ -146,6 +149,4 @@ public class BTConnectionHandler extends Thread {
             }
         }
     }
-
-
 }
