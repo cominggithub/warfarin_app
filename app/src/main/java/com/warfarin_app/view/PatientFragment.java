@@ -138,12 +138,13 @@ public class PatientFragment extends android.support.v4.app.Fragment implements 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         etBlueDevName.setText(
-                            BTUtil.getNameFromNameAddress(arrayAdapter.getItem(which)) + "**" +
+                            BTUtil.getNameFromNameAddress(arrayAdapter.getItem(which)) + " " +
                                     BTUtil.getAddressFromNameAddress(arrayAdapter.getItem(which))
 
 
                         );
                         BTManager.setDeviceByAddress(BTUtil.getAddressFromNameAddress(arrayAdapter.getItem(which)));
+                        savePatient();
                     }
                 });
         builderSingle.show();
@@ -151,17 +152,20 @@ public class PatientFragment extends android.support.v4.app.Fragment implements 
 
     public void savePatient()
     {
+        updatePatientFromUI();
         DbUtil.savePatient(patient);
+
     }
 
     public void loadPatient()
     {
         patient = new Patient();
-        patient.setName("No Name");
+        patient.setName("尚未設定");
         patient.setGender(true);
         patient.setBirthday("1999/01/02");
-        patient.setDoctor("Black Jack");
+        patient.setDoctor("尚未設定");
         patient.setIsWarfarin(true);
+        patient.setBlueDevName("尚未設定");
 
         DbUtil.loadPatient(patient);
         updatePatientToUI();

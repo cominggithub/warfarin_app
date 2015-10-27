@@ -169,6 +169,14 @@ public class MainActivity extends FragmentActivity {
 
     public void initDb()
     {
+        patient = new Patient();
+        patient.setName("尚未設定");
+        patient.setGender(true);
+        patient.setBirthday("1999/01/02");
+        patient.setDoctor("尚未設定");
+        patient.setIsWarfarin(true);
+        patient.setBlueDevName("尚未設定");
+
         DbUtil.init(context);
         DbUtil.cleanExamData();
         DbUtil.cleanLogData();

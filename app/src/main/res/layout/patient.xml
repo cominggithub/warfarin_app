@@ -237,14 +237,16 @@
         android:textColor="@android:color/background_dark" />
 
     <EditText
-        android:layout_width="wrap_content"
+        android:layout_width="280dp"
         android:layout_height="wrap_content"
         android:id="@+id/patient_etBlueDevName"
         android:text="BLUETEH (11:22:33:44:55:66)"
         android:textSize="18dp"
         android:layout_alignBottom="@+id/editText"
         android:layout_alignLeft="@+id/patient_etName"
-        android:layout_alignStart="@+id/patient_etName" />
+        android:layout_alignStart="@+id/patient_etName"
+        android:enabled="false"
+        android:editable="false" />
 
     <Button
         android:layout_width="wrap_content"

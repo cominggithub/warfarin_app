@@ -31,13 +31,14 @@ public class BTManager extends Thread {
     private static BTConnectionHandler btConnectionHandler;
     private static ExamData data;
     private static int BTScanInterval = 10000;
-    private static int recvExamInterval = 10000;
+    private static int recvExamInterval = 20000;
     private static boolean isConnected = false;
     MainActivity mainActivity;
     private static int id = 0;
     private static BTManager instance;
     private boolean isDeviceChanged = false;
     private boolean isRecvDataTimeout = false;
+    private Object deviceSyncObject = new Object();
 
     private List<ExamData> examDataQueue;
 
@@ -47,29 +48,29 @@ public class BTManager extends Thread {
             String action = intent.getAction();
             BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 
-            Log.d("btevt", "BT event");
+            Log.d("bt", "BT event");
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 LogUtil.appendMsg("found Bluetooth device " + device.getName() + ", " + device.getAddress());
-                Log.d("btevt", "found Bluetooth device " + device.getName() + ", " + device.getAddress());
+                Log.d("bt", "found Bluetooth device " + device.getName() + ", " + device.getAddress());
 
             }
             else if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
                 LogUtil.appendMsg(device.getName() + " " + device.getAddress() + " connect");
-                Log.d("btevt", device.getName() + " " + device.getAddress() + " connect");
+                Log.d("bt", device.getName() + " " + device.getAddress() + " connect");
                 isConnected = true;
 
             }
             else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-                Log.d("btevt", device.getName() + " " + device.getAddress() + " discovery finished");
+                Log.d("bt", device.getName() + " " + device.getAddress() + " discovery finished");
 
             }
             else if (BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED.equals(action)) {
-                Log.d("btevt", "disconnect requested " + device.getAddress());
+                Log.d("bt", "disconnect requested " + device.getAddress());
 
             }
             else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
                 LogUtil.appendMsg(device.getName() + " " + device.getAddress() + " disconnect");
-                Log.d("btevt", device.getName() + " " + device.getAddress() + " disconnect");
+                Log.d("bt", device.getName() + " " + device.getAddress() + " disconnect");
                 if (getDevice() == device)
                 {
                     isConnected = false;
@@ -124,31 +125,34 @@ public class BTManager extends Thread {
         while(alive)
         {
             Log.d("bt", "manager loop");
+
             if (isDeviceChanged)
             {
+                isDeviceChanged = false;
                 stopBtHandler();
+                startBtHandler();
             }
 
             if (device == null)
             {
-                LogUtil.appendMsg("wait BT connection");
+                LogUtil.appendMsg("no bt device configured");
                 try {
-                    Thread.sleep(BTScanInterval);
+                    synchronized (deviceSyncObject)
+                    {
+                        deviceSyncObject.wait();
+                    }
                 }catch (Exception e)
                 {
                     Log.e("bt", "exception", e);
-                    Log.d("bt", "set device null");
-                    device = null;
-                    btConnectionHandler = null;
                 }
             }
             // user has select device to be connected with
             else
             {
-                Log.d("bt", "recv exam data");
+                Log.d("bt", "start recv exam data");
                 // start bt handler if not started yet
                 if (!isBtHandlerStarted()) {
-                    Log.d("bt", "bt handler is not stared");
+                    Log.d("bt", "restart bt handler");
                     startBtHandler();
                 }
 
@@ -161,7 +165,7 @@ public class BTManager extends Thread {
                 else
                 {
                     Log.d("bt", "null exam data");
-                    if (isBtHandlerStarted()) {
+                    if (isBtHandlerStarted() && !btConnectionHandler.isConnected()) {
                         stopBtHandler();
                     }
 
@@ -175,10 +179,7 @@ public class BTManager extends Thread {
             }
 
         }
-
-
         close();
-
     }
 
     public void startBtHandler() {
@@ -191,7 +192,9 @@ public class BTManager extends Thread {
             return;
         }
 
+//        BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        mBluetoothAdapter.cancelDiscovery();
         btConnectionHandler = new BTConnectionHandler(device, mBluetoothAdapter);
         btConnectionHandler.setDataReadSignal(dataReadSignal);
         btConnectionHandler.start();
@@ -200,8 +203,10 @@ public class BTManager extends Thread {
     public void stopBtHandler() {
         Log.d("bt", "stopBtHandler");
         LogUtil.appendMsg("stop Bluetooth Connection Handler");
-        btConnectionHandler.stopRunning();
-        btConnectionHandler = null;
+        if (btConnectionHandler != null && btConnectionHandler.isRunning()) {
+            btConnectionHandler.stopRunning();
+            btConnectionHandler = null;
+        }
     }
 
     public boolean isBtHandlerStarted()
@@ -233,10 +238,15 @@ public class BTManager extends Thread {
                     dataReadSignal.setHasDataToProcess(false);
                     return btConnectionHandler.getExamData();
                 }
-                else
+                else if (btConnectionHandler.isConnected())
                 {
                     Log.d("bt", "wait exam data timeout");
                     isRecvDataTimeout = true;
+                }
+                else
+                {
+                    Log.d("bt", "wait exam data timeout and disconnected");
+                    isConnected = false;
                 }
             }
             catch (InterruptedException ix)
@@ -265,10 +275,13 @@ public class BTManager extends Thread {
 
     private void setDevice(BluetoothDevice d)
     {
-        if (d != null && (targetDevice == null || targetDevice != d)) {
-            device = d;
-            isDeviceChanged = true;
-            restart();
+        synchronized (deviceSyncObject) {
+            if (d != null && (device == null || device != d)) {
+                device = d;
+                isDeviceChanged = true;
+                restart();
+                deviceSyncObject.notifyAll();
+            }
         }
     }
 
@@ -284,7 +297,7 @@ public class BTManager extends Thread {
 
     public boolean isRunning()
     {
-        return alive;
+        return this.isAlive();
     }
 
     public void close()
@@ -292,6 +305,7 @@ public class BTManager extends Thread {
         alive = false;
 
         Log.d("btevt", "BTUtil close");
+        stopBtHandler();
 
         if (mainActivity != null) {
             mainActivity.unregisterReceiver(mReceiver);

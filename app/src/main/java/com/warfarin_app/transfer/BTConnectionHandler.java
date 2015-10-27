@@ -6,8 +6,10 @@ import android.bluetooth.BluetoothSocket;
 import android.util.Log;
 
 import com.warfarin_app.data.ExamData;
+import com.warfarin_app.util.LogUtil;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,7 +19,7 @@ import java.util.UUID;
 
 public class BTConnectionHandler extends Thread {
     private final BluetoothDevice mmDevice;
-    private final BluetoothSocket mmSocket;
+    private BluetoothSocket mmSocket = null;
     private boolean isRunning = true;
     private DataReadSignal dataReadSignal;
     private ExamData data;
@@ -30,28 +32,30 @@ public class BTConnectionHandler extends Thread {
 
     //    private BluetoothAdapter mBluetoothAdapter;
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+    private boolean isConnected = false;
 
     private BTConnection connThread;
     public BTConnectionHandler(BluetoothDevice device, BluetoothAdapter bleAdapter) {
         // Use a temporary object that is later assigned to mmSocket,
         // because mmSocket is final
 
-        Log.d("bt", "connect");
-        BluetoothSocket tmp = null;
+        Log.d("bt", "Connect to " + device.getName() + "(" + device.getAddress() + ")");
+        LogUtil.appendMsg("Connect to " + device.getName() + "(" + device.getAddress() + ")");
+
         mmDevice = device;
         mBluetoothAdapter = bleAdapter;
 
         // Get a BluetoothSocket to connect with the given BluetoothDevice
         try {
             // MY_UUID is the app's UUID string, also used by the server code
-            tmp = device.createRfcommSocketToServiceRecord(MY_UUID);
 
-        } catch (IOException e) {
+            Method m= mmDevice.getClass().getMethod("createRfcommSocket", new Class[]{int.class});
+            mmSocket =    (BluetoothSocket) m.invoke(device, 1);
+            isConnected = true;
+        } catch (Exception e) {
             Log.e("bt", "exception", e);
             stopRunning();
-
         }
-        mmSocket = tmp;
     }
 
     public void setDataReadSignal(DataReadSignal signal)
@@ -119,9 +123,11 @@ public class BTConnectionHandler extends Thread {
         return isRunning;
     }
 
+    public boolean isConnected() { return isConnected; }
     public void stopRunning()
     {
         isRunning = false;
+        isConnected = false;
         Log.d("bt", "stop BT Connection Handler");
         if (dataReadSignal != null)
         {

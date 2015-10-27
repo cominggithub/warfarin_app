@@ -65,7 +65,7 @@ public class LogFragment extends android.support.v4.app.Fragment implements LogM
         if (tvMsg != null) {
             StringBuilder sb = new StringBuilder();
             ArrayList<LogData> logList = new ArrayList<>();
-            DbUtil.loadLogHistory(logList, 200);
+            DbUtil.loadLogHistory(logList, 40);
 //            for(int i=logList.size()-1; i>=0; i-- )
             for(int i=0; i<logList.size(); i++)
             {
