@@ -28,7 +28,7 @@ import com.warfarin_app.util.SystemInfo;
 /**
  * Created by Coming on 8/5/15.
  */
-public class PatientFragment extends android.support.v4.app.Fragment implements View.OnClickListener {
+public class PatientFragment extends android.support.v4.app.Fragment implements View.OnClickListener, DateSelectedListener {
 
     private String value = "";
     private Button btOK;
@@ -45,6 +45,7 @@ public class PatientFragment extends android.support.v4.app.Fragment implements 
     private Button btSetBlueDev;
 
     private MainActivity mainActivity;
+    private DatePickerFragment newFragment;
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -60,6 +61,8 @@ public class PatientFragment extends android.support.v4.app.Fragment implements 
 //        v = inflater.inflate(R.layout.patient, container, false);
 
 
+        newFragment = new DatePickerFragment();
+        newFragment.addDateSelectedListener(this);
         Log.d("app", "onCreateView");
         return inflater.inflate(R.layout.patient, container, false);
     }
@@ -87,6 +90,8 @@ public class PatientFragment extends android.support.v4.app.Fragment implements 
         rbIsMarfarinYes = (RadioButton) this.getView().findViewById(R.id.patient_rbWarfarinYes);
         etBlueDevName = (EditText) this.getView().findViewById(R.id.patient_etBlueDevName);
 
+        etBirthday.setOnClickListener(this);
+
         loadPatient();
     }
 
@@ -107,6 +112,10 @@ public class PatientFragment extends android.support.v4.app.Fragment implements 
         else if (v == btSetBlueDev)
         {
             selectBlueDev();
+        }
+        else if (v == etBirthday)
+        {
+            newFragment.show(mainActivity.getSupportFragmentManager(), "datePicker");
         }
     }
 
@@ -194,6 +203,11 @@ public class PatientFragment extends android.support.v4.app.Fragment implements 
         patient.setIsWarfarin(rbIsMarfarinYes.isChecked());
         patient.setBlueDevName(BTUtil.getNameFromNameAddress((etBlueDevName.getText().toString())));
         patient.setBlueDevAddress(BTUtil.getAddressFromNameAddress((etBlueDevName.getText().toString())));
+    }
+
+    public void onDateSelected(int year, int month, int day)
+    {
+        etBirthday.setText(String.format("%d/%d/%d", year, month, day));
     }
 
 }

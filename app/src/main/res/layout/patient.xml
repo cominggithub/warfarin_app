@@ -38,16 +38,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:text="Name"
         android:ems="10"
         android:id="@+id/patient_etName"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
         android:layout_marginTop="150dp"
         android:layout_alignLeft="@+id/alignCenter"
         android:textColor="@android:color/background_dark"
         android:textSize="30dp"
-        android:layout_marginLeft="-20dp" />
+        android:layout_marginLeft="-20dp"
+        />
 
     <TextView
         android:layout_width="wrap_content"
@@ -122,7 +120,10 @@
         android:layout_marginTop="15dp"
         android:layout_alignStart="@id/patient_etName"
         android:textColor="@android:color/background_dark"
-        android:textSize="30dp" />
+        android:textSize="30dp"
+        android:editable="false"
+        android:focusable="false"
+        android:enabled="true" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -148,7 +149,9 @@
         android:layout_alignStart="@id/patient_etName"
         android:layout_marginTop="20dp"
         android:textColor="@android:color/background_dark"
-        android:textSize="30dp" />
+        android:textSize="30dp"
+        android:editable="false"
+        />
 
     <TextView
         android:layout_width="wrap_content"
@@ -254,7 +257,8 @@
         android:text="設定"
         android:id="@+id/patient_btSetBlueDev"
         android:layout_alignTop="@+id/patient_etBlueDevName"
-        android:layout_toRightOf="@+id/patient_etBlueDevName" />
+        android:layout_toRightOf="@+id/patient_etBlueDevName"
+        android:textSize="30dp" />
 
 
 </RelativeLayout>

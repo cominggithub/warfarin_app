@@ -136,20 +136,6 @@ public class DataReceiver {
                 sendBtCmd(BTCmd.ACK2);
                 alive = false;
             }
-
-//            try
-//            {
-//                if (socket == null || !socket.isConnected() || socket.getInputStream() == null || socket.getOutputStream() == null)
-//                {
-//                    Log.d("bt", "check bt socket failed");
-//                    alive = false;
-//                }
-//            }catch (IOException e)
-//            {
-//                Log.e("bt", "exception", e);
-//                alive = false;
-//            }
-
         }
 
         return d;

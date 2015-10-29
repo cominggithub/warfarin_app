@@ -82,7 +82,11 @@ public class BTManager extends Thread {
 
     public void init()
     {
-        Log.d("btevt", "BTUtil init");
+        examDataQueue = new ArrayList();
+    }
+
+    public void registerReceiver()
+    {
         IntentFilter filter1 = new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED);
         IntentFilter filter2 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
         IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
@@ -91,7 +95,6 @@ public class BTManager extends Thread {
         mainActivity.registerReceiver(mReceiver, filter2);
         mainActivity.registerReceiver(mReceiver, filter3);
         mainActivity.registerReceiver(mReceiver, filter4);
-        examDataQueue = new ArrayList();
     }
 
     private BTManager(MainActivity mainActivity)
@@ -122,6 +125,7 @@ public class BTManager extends Thread {
         Thread t = Thread.currentThread();
         t.setName("BT Manager " + id++);
         alive = true;
+        registerReceiver();
         while(alive)
         {
             Log.d("bt", "manager loop");
@@ -304,11 +308,16 @@ public class BTManager extends Thread {
     {
         alive = false;
 
-        Log.d("btevt", "BTUtil close");
         stopBtHandler();
 
-        if (mainActivity != null) {
-            mainActivity.unregisterReceiver(mReceiver);
+        if (mainActivity != null && mReceiver != null) {
+            try {
+                mainActivity.unregisterReceiver(mReceiver);
+                mReceiver = null;
+            }catch(Exception e)
+            {
+                Log.e("bt", "exception", e);
+            }
         }
 
         LogUtil.appendMsg("Stop Bluetooth Manager");

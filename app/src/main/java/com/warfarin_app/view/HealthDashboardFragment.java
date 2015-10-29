@@ -3,18 +3,19 @@ package com.warfarin_app.view;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.warfarin_app.R;
 import com.warfarin_app.data.ExamData;
 import com.warfarin_app.data.Margin;
 import com.warfarin_app.db.DbUtil;
+import com.warfarin_app.transfer.ExamDataListener;
 
 import java.util.ArrayList;
 
@@ -23,7 +24,7 @@ import java.util.ArrayList;
 /**
  * Created by Coming on 8/5/15.
  */
-public class HealthDashboardFragment extends android.support.v4.app.Fragment {
+public class HealthDashboardFragment extends android.support.v4.app.Fragment implements ExamDataListener {
 
 
     ExamData examData;
@@ -34,19 +35,22 @@ public class HealthDashboardFragment extends android.support.v4.app.Fragment {
     ImageView normalIndicatorImage;
     ImageView highIndicatorImage;
     RelativeLayout mainLayout;
+    TextView tvInr;
 
 
     Margin lowMargin;
     Margin highMargin;
     Margin normalMargin;
 
+    MainActivity mainActivity;
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-        MainActivity mainActivity = (MainActivity)activity;
+        mainActivity = (MainActivity)activity;
         mainActivity.setHealthDashboardFragment(this);
-//        value = mainActivity.getPersonalProfileData();
+        mainActivity.addExamDataListener(this);
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -57,7 +61,7 @@ public class HealthDashboardFragment extends android.support.v4.app.Fragment {
         mainLayout.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                dumpPosition();
+//                dumpPosition();
                 // gets called after layout has been done but before display.
                 mainLayout.getViewTreeObserver().removeGlobalOnLayoutListener(this);
 
@@ -79,7 +83,7 @@ public class HealthDashboardFragment extends android.support.v4.app.Fragment {
         lowIndicatorImage = (ImageView) this.getView().findViewById(R.id.healthDashboard_ivIndicatorLow);
         normalIndicatorImage = (ImageView) this.getView().findViewById(R.id.healthDashboard_ivIndicatorNormal);
         highIndicatorImage = (ImageView) this.getView().findViewById(R.id.healthDashboard_ivIndicatorHigh);
-
+        tvInr = (TextView) this.getView().findViewById(R.id.healthDashboard_tvInr);
 
         normalMargin = new Margin();
 
@@ -87,9 +91,7 @@ public class HealthDashboardFragment extends android.support.v4.app.Fragment {
         normalMargin.top = 0;
         normalMargin.right = 0;
         normalMargin.bottom = 0;
-
         setIndicatorNormal();
-
     }
     @Override
     public void onResume()
@@ -109,47 +111,49 @@ public class HealthDashboardFragment extends android.support.v4.app.Fragment {
 
     public void setIndicatorNormal()
     {
-//        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)indicatorImage.getLayoutParams();
-//        params.setMargins(
-//                normalMargin.left,
-//                normalMargin.top,
-//                normalMargin.right,
-//                normalMargin.bottom
-//        ); //substitute parameters for left, top, right, bottom
-
         lowIndicatorImage.setVisibility(View.INVISIBLE);
         normalIndicatorImage.setVisibility(View.VISIBLE);
         highIndicatorImage.setVisibility(View.INVISIBLE);
     }
 
-
-
     public void setIndicatorHigh()
     {
         lowIndicatorImage.setVisibility(View.INVISIBLE);
-        normalIndicatorImage.setVisibility(View.INVISIBLE
-        );
+        normalIndicatorImage.setVisibility(View.INVISIBLE);
         highIndicatorImage.setVisibility(View.VISIBLE);
     }
 
-    public void updateMargin()
+    @Override
+    public void onExamDataReceived(ExamData d)
     {
-//        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)indicatorImage.getLayoutParams();
-//        params.setMargins(0, 0, 10, 0); //substitute parameters for left, top, right, bottom
-//
-//        indicatorImage.setLayoutParams(params);
-    }
+//        examData = d;
+        mainActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                refresh();
 
+            }
+        });
+    }
+    public void refresh()
+    {
+        loadExamDataToUI();
+    }
     public void loadExamDataToUI()
     {
+        loadExamData();
         if (examData == null)
             return;
-        if (examData.inr < 2)
+        if (examData.inr < 2) {
             setIndicatorLow();
-        else if(examData.inr > 4)
+        }
+        else if(examData.inr > 4) {
             setIndicatorHigh();
-        else
+        }
+        else {
             setIndicatorNormal();
+        }
+        tvInr.setText("INR: " + examData.getInrStr());
 
     }
     public void loadExamData()
@@ -166,9 +170,9 @@ public class HealthDashboardFragment extends android.support.v4.app.Fragment {
      void dumpPosition()
     {
 
-        dumpViewPosition("lowImage", lowImage);
-        dumpViewPosition("highImage", highImage);
-        dumpViewPosition("normalImage", normalImage);
+//        dumpViewPosition("lowImage", lowImage);
+//        dumpViewPosition("highImage", highImage);
+//        dumpViewPosition("normalImage", normalImage);
 
     }
 
@@ -181,55 +185,56 @@ public class HealthDashboardFragment extends android.support.v4.app.Fragment {
 //    }
 
 
-    public void dumpViewPosition(String name, View v)
-    {
+//    public void dumpViewPosition(String name, View v)
+//    {
+//
+//        int pos[] = new int[4];
+//
+//        v.getLocationInWindow(pos);
+//        Log.d("app",
+//                String.format("%s: x: %d, y: %d, a: %d, b: %d",
+//                        name,
+//                        pos[0],
+//                        pos[1],
+//                        pos[2],
+//                        pos[3]
+//
+//                )
+//        );
+//
+//        v.getLocationOnScreen(pos);
+//        Log.d("app",
+//                String.format("%s: x: %d, y: %d, a: %d, b: %d",
+//                        name,
+//                        pos[0],
+//                        pos[1],
+//                        pos[2],
+//                        pos[3]
+//                )
+//        );
+//
+//        Log.d("app",
+//                String.format("%s: left:%d, top:%d, width:%d, height: %d",
+//                        name,
+//                        v.getLeft(),
+//                        v.getTop(),
+//                        v.getWidth(),
+//                        v.getRight()
+//
+//                )
+//        );
+//
+//        Log.d("app",
+//                String.format("%s: x:%f, y:%f, width:%d, height: %d",
+//                        name,
+//                        v.getX(),
+//                        v.getY(),
+//                        v.getWidth(),
+//                        v.getRight()
+//
+//                )
+//        );
 
-        int pos[] = new int[4];
-
-        v.getLocationInWindow(pos);
-        Log.d("app",
-                String.format("%s: x: %d, y: %d, a: %d, b: %d",
-                        name,
-                        pos[0],
-                        pos[1],
-                        pos[2],
-                        pos[3]
-
-                )
-        );
-
-        v.getLocationOnScreen(pos);
-        Log.d("app",
-                String.format("%s: x: %d, y: %d, a: %d, b: %d",
-                        name,
-                        pos[0],
-                        pos[1],
-                        pos[2],
-                        pos[3]
-                )
-        );
-
-        Log.d("app",
-                String.format("%s: left:%d, top:%d, width:%d, height: %d",
-                        name,
-                        v.getLeft(),
-                        v.getTop(),
-                        v.getWidth(),
-                        v.getRight()
-
-                )
-        );
-
-        Log.d("app",
-                String.format("%s: x:%f, y:%f, width:%d, height: %d",
-                        name,
-                        v.getX(),
-                        v.getY(),
-                        v.getWidth(),
-                        v.getRight()
-
-                )
-        );
-
-    }
+//    }
 }
+
