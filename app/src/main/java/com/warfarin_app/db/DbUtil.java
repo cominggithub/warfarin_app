@@ -9,6 +9,7 @@ import android.util.Log;
 import com.warfarin_app.data.ExamData;
 import com.warfarin_app.data.LogData;
 import com.warfarin_app.data.Patient;
+import com.warfarin_app.util.DateUtil;
 
 import java.util.ArrayList;
 
@@ -166,11 +167,13 @@ public class DbUtil {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(ExamEntry.COLUMN_NAME_DATE, d.date);
+//        values.put(ExamEntry.COLUMN_NAME_DATE, d.date);
+
+        values.put(ExamEntry.COLUMN_NAME_DATE, d.getDbDateTimeStr());
+        values.put(ExamEntry.COLUMN_NAME_WEEK, DateUtil.getWeek(d.date));
         values.put(ExamEntry.COLUMN_NAME_PT, d.pt);
         values.put(ExamEntry.COLUMN_NAME_INR, d.inr);
         values.put(ExamEntry.COLUMN_NAME_MARFARIN, d.warfarin);
-
         d.id = db.insert(ExamEntry.TABLE_NAME, null, values);
     }
 
@@ -266,6 +269,152 @@ public class DbUtil {
         return loadExamHistoryWithLimit(list, -1);
     }
 
+    public static boolean loadExamHistoryByWeekWithLimit(ArrayList<ExamData> list, int limitCount)
+    {
+
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        Cursor cursor;
+
+        String[] projection = {
+                "strftime('%Y', date) year ",
+                ExamEntry.COLUMN_NAME_WEEK,
+                "avg(" + ExamEntry.COLUMN_NAME_PT +") " + ExamEntry.COLUMN_NAME_PT ,
+                "avg(" + ExamEntry.COLUMN_NAME_INR + ") " + ExamEntry.COLUMN_NAME_INR,
+                "avg(" + ExamEntry.COLUMN_NAME_MARFARIN + ") " + ExamEntry.COLUMN_NAME_MARFARIN
+        };
+
+
+        String sortOrder = "strftime('%Y', date) DESC, " + ExamEntry.COLUMN_NAME_WEEK + " DESC";
+        String orderBy = "strftime('%Y', date), " + ExamEntry.COLUMN_NAME_WEEK;
+        String limit = "" + limitCount;
+
+
+        // no limit
+        if (limitCount == -1) {
+            cursor =db.query(
+                    ExamEntry.TABLE_NAME,  // The table to query
+                    projection,                               // The columns to return
+                    null,
+                    null,                                       // The values for the WHERE clause
+                    orderBy,                                     // don't group the rows
+                    null,                                     // don't filter by row groups
+                    sortOrder                                 // The sort order,
+            );
+        }
+        else
+        {
+            cursor =db.query(
+                    ExamEntry.TABLE_NAME,  // The table to query
+                    projection,                               // The columns to return
+                    null,
+                    null,                                       // The values for the WHERE clause
+                    orderBy,                                     // don't group the rows
+                    null,                                     // don't filter by row groups
+                    sortOrder,                                 // The sort order,
+                    limit
+            );
+        }
+
+        if (cursor.getCount() < 1)
+        {
+            return false;
+        }
+
+
+        cursor.moveToFirst();
+
+        for(int i=0; i<cursor.getCount(); i++)
+        {
+            ExamData ed = new ExamData();
+            ed.pt = cursor.getDouble(cursor.getColumnIndexOrThrow(ExamEntry.COLUMN_NAME_PT));
+            ed.inr = cursor.getDouble(cursor.getColumnIndexOrThrow(ExamEntry.COLUMN_NAME_INR));
+            ed.warfarin = cursor.getDouble(cursor.getColumnIndexOrThrow(ExamEntry.COLUMN_NAME_MARFARIN));
+            ed.date = DateUtil.getTimeByWeek(
+                    cursor.getString(cursor.getColumnIndexOrThrow("year")),
+                    cursor.getInt(cursor.getColumnIndexOrThrow(ExamEntry.COLUMN_NAME_WEEK))
+            );
+
+            list.add(ed);
+
+            cursor.moveToNext();
+        }
+
+        return true;
+    }
+
+    public static boolean loadExamHistoryByMonthWithLimit(ArrayList<ExamData> list, int limitCount)
+    {
+
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        Cursor cursor;
+
+        String[] projection = {
+                "strftime('%Y', " + ExamEntry.COLUMN_NAME_DATE + ") year",
+                "strftime('%m', " + ExamEntry.COLUMN_NAME_DATE + ") month",
+                "avg(" + ExamEntry.COLUMN_NAME_PT +") " + ExamEntry.COLUMN_NAME_PT ,
+                "avg(" + ExamEntry.COLUMN_NAME_INR + ") " + ExamEntry.COLUMN_NAME_INR,
+                "avg(" + ExamEntry.COLUMN_NAME_MARFARIN + ") " + ExamEntry.COLUMN_NAME_MARFARIN
+        };
+
+
+        String sortOrder =
+                "strftime('%Y/%m', " + ExamEntry.COLUMN_NAME_DATE + ") DESC";
+        String orderBy = "strftime('%Y/%m', " + ExamEntry.COLUMN_NAME_DATE + ")";
+        String limit = "" + limitCount;
+
+
+        // no limit
+        if (limitCount == -1) {
+            cursor =db.query(
+                    ExamEntry.TABLE_NAME,  // The table to query
+                    projection,                               // The columns to return
+                    null,
+                    null,                                       // The values for the WHERE clause
+                    orderBy,                                     // don't group the rows
+                    null,                                     // don't filter by row groups
+                    sortOrder                                 // The sort order,
+            );
+        }
+        else
+        {
+            cursor =db.query(
+                    ExamEntry.TABLE_NAME,  // The table to query
+                    projection,                               // The columns to return
+                    null,
+                    null,                                       // The values for the WHERE clause
+                    orderBy,                                     // don't group the rows
+                    null,                                     // don't filter by row groups
+                    sortOrder,                                 // The sort order,
+                    limit
+            );
+        }
+
+        if (cursor.getCount() < 1)
+        {
+            return false;
+        }
+
+
+        cursor.moveToFirst();
+
+        for(int i=0; i<cursor.getCount(); i++)
+        {
+            ExamData ed = new ExamData();
+            ed.pt = cursor.getDouble(cursor.getColumnIndexOrThrow(ExamEntry.COLUMN_NAME_PT));
+            ed.inr = cursor.getDouble(cursor.getColumnIndexOrThrow(ExamEntry.COLUMN_NAME_INR));
+            ed.warfarin = cursor.getDouble(cursor.getColumnIndexOrThrow(ExamEntry.COLUMN_NAME_MARFARIN));
+
+            ed.date = DateUtil.getTimeByYearMonth(
+                    cursor.getString(cursor.getColumnIndexOrThrow("year")),
+                    cursor.getString(cursor.getColumnIndexOrThrow("month")));
+            list.add(ed);
+
+            cursor.moveToNext();
+        }
+
+        return true;
+    }
+
     public static boolean loadExamHistoryWithLimit(ArrayList<ExamData> list, int limitCount)
     {
         int result;
@@ -277,15 +426,11 @@ public class DbUtil {
         String[] projection = {
                 ExamEntry._ID,
                 ExamEntry.COLUMN_NAME_DATE,
+                ExamEntry.COLUMN_NAME_WEEK,
                 ExamEntry.COLUMN_NAME_PT,
                 ExamEntry.COLUMN_NAME_INR,
                 ExamEntry.COLUMN_NAME_MARFARIN
         };
-
-        String[] where = {
-                ExamEntry._ID,
-        };
-
 
         String sortOrder =
                 ExamEntry._ID + " DESC";
@@ -316,16 +461,6 @@ public class DbUtil {
                     sortOrder,                                 // The sort order,
                     limit
             );
-
-//            cursor =db.query(
-//                    ExamEntry.TABLE_NAME,  // The table to query
-//                    projection,                               // The columns to return
-//                    null,
-//                    null,                                       // The values for the WHERE clause
-//                    null,                                     // don't group the rows
-//                    null,                                     // don't filter by row groups
-//                    sortOrder                                 // The sort order,
-//            );
         }
 
         if (cursor.getCount() < 1)
@@ -340,10 +475,10 @@ public class DbUtil {
         {
             ExamData ed = new ExamData();
             ed.id = cursor.getLong(cursor.getColumnIndexOrThrow(ExamEntry._ID));
-            ed.date = cursor.getLong(cursor.getColumnIndexOrThrow(ExamEntry.COLUMN_NAME_DATE));
             ed.pt = cursor.getDouble(cursor.getColumnIndexOrThrow(ExamEntry.COLUMN_NAME_PT));
             ed.inr = cursor.getDouble(cursor.getColumnIndexOrThrow(ExamEntry.COLUMN_NAME_INR));
             ed.warfarin = cursor.getDouble(cursor.getColumnIndexOrThrow(ExamEntry.COLUMN_NAME_MARFARIN));
+            ed.date = DateUtil.getTimeByString(cursor.getString(cursor.getColumnIndexOrThrow(ExamEntry.COLUMN_NAME_DATE)));
             list.add(ed);
 
             cursor.moveToNext();
@@ -369,25 +504,50 @@ public class DbUtil {
 //        db.insert(ExamEntry.TABLE_NAME, null, values);
         db.update(ExamEntry.TABLE_NAME, values, ExamEntry._ID + "=" + d.id, null);
     }
+
+
     public static void insertExamHistorySample()
     {
-        for(int i=0; i<10; i++)
-        {
-            ExamData ed = new ExamData();
+        int year;
+        int month;
+        int day;
+        int hour = 1;
+        int min = 2;
+        int sec = 3;
+        int week;
 
-            ed.pt = 1+i*.1;
-            ed.inr = 2+i*.2;
-            ed.warfarin = 3+i*.3;
 
-            DbUtil.saveExamData(ed);
+        for(year=2013; year<2016; year++) {
+            for (month = 1; month < 13; month++) {
+                for (day = 1; day < 29; day++) {
+
+                    ExamData ed = new ExamData();
+
+                    ed.date = DateUtil.getTimeBy(year, month, day, hour, min, sec);
+                    week = DateUtil.getWeek(ed.date);
+
+//                    ed.pt = month;
+//                    ed.inr = month+1;
+//                    ed.warfarin = month+2;
+
+                    ed.pt = week;
+                    ed.inr = week+1;
+                    ed.warfarin = week+2;
+
+                    DbUtil.saveExamData(ed);
+                }
+            }
         }
+
+        ArrayList<ExamData> list = new ArrayList<>();
+        loadExamHistoryByWeekWithLimit(list, 60);
+//        loadExamHistoryByMonthWithLimit(list, 30);
     }
 
     public static void cleanDb()
     {
-//        cleanLogData();
+        cleanLogData();
         cleanExamData();
-
     }
 
     public static void cleanExamData()
@@ -402,6 +562,5 @@ public class DbUtil {
         Log.d("app", "clean cleanLogData");
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         db.delete(LogEntry.TABLE_NAME, null, null);
-
     }
 }

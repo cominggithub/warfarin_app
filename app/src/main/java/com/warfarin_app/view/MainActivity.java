@@ -20,6 +20,7 @@ import com.warfarin_app.db.DbUtil;
 import com.warfarin_app.transfer.BTManager;
 import com.warfarin_app.transfer.BTUtil;
 import com.warfarin_app.transfer.ExamDataListener;
+import com.warfarin_app.util.DateUtil;
 import com.warfarin_app.util.SystemInfo;
 
 public class MainActivity extends FragmentActivity {
@@ -181,6 +182,8 @@ public class MainActivity extends FragmentActivity {
         DbUtil.cleanExamData();
         DbUtil.cleanLogData();
         DbUtil.loadPatient(patient);
+
+        DateUtil.dumpWeek();
     }
 
     public void initBt()

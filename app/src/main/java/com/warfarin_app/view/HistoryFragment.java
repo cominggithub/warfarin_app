@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
@@ -22,6 +23,7 @@ import com.warfarin_app.R;
 import com.warfarin_app.data.ExamData;
 import com.warfarin_app.db.DbUtil;
 import com.warfarin_app.transfer.ExamDataListener;
+import com.warfarin_app.util.DateUtil;
 import com.warfarin_app.util.SystemInfo;
 
 import java.util.ArrayList;
@@ -32,7 +34,16 @@ import java.util.HashMap;
 /**
  * Created by Coming on 8/10/15.
  */
-public class HistoryFragment extends android.support.v4.app.Fragment implements ExamDataListener
+
+enum MODE
+{
+    RECENT,
+    WEEK,
+    MONTH,
+    ALL
+}
+
+public class HistoryFragment extends android.support.v4.app.Fragment implements ExamDataListener, View.OnClickListener
 {
 
     ListView listview;
@@ -41,12 +52,25 @@ public class HistoryFragment extends android.support.v4.app.Fragment implements 
     LineChart mChart;
     ArrayList<ExamData> data;
     MainActivity mainActivity;
+    Button btRecent;
+    Button btMonth;
+    Button btWeek;
+    Button btAll;
+
+    MODE mode;
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
         mainActivity = (MainActivity)activity;
         mainActivity.addExamDataListener(this);
+        mode = MODE.RECENT;
+
+        if (!SystemInfo.isBluetooth)
+        {
+            DbUtil.cleanExamData();
+            DbUtil.insertExamHistorySample();
+        }
     }
 
     @Override
@@ -58,6 +82,16 @@ public class HistoryFragment extends android.support.v4.app.Fragment implements 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         listview  = (ListView) this.getView().findViewById(R.id.history_lvExamHistoryList);
+        btRecent = (Button) this.getView().findViewById(R.id.history_btRecent);
+        btWeek = (Button) this.getView().findViewById(R.id.history_btWeek);
+        btMonth = (Button) this.getView().findViewById(R.id.history_btMonth);
+        btAll = (Button) this.getView().findViewById(R.id.history_btAll);
+
+        btRecent.setOnClickListener(this);
+        btWeek.setOnClickListener(this);
+        btMonth.setOnClickListener(this);
+        btAll.setOnClickListener(this);
+
         Log.d("app", "onActivityCreated");
         initChart();
         refresh();
@@ -65,13 +99,10 @@ public class HistoryFragment extends android.support.v4.app.Fragment implements 
 
     public void refresh()
     {
-        Log.d("app", "refresh start");
-        Log.d("bt", "refresh start");
         loadExamDataFromDb();
         loadExamDataToListView();
         refreshChartData();
-        Log.d("app", "refresh done");
-        Log.d("bt", "refresh done");
+
     }
 
     public void loadExamDataToListView()
@@ -79,8 +110,25 @@ public class HistoryFragment extends android.support.v4.app.Fragment implements 
         examDataList.clear();
         for(int i=0; i<data.size(); i++){
             HashMap<String,String> item = new HashMap<String,String>();
-            item.put("date", data.get(i).getDateStr());
-            item.put("time", data.get(i).getTimeStr());
+
+            switch(mode)
+            {
+                case RECENT:
+                case ALL:
+                    item.put("date", data.get(i).getDateStr());
+                    item.put("time", data.get(i).getTimeStr());
+                    break;
+                case WEEK:
+                    item.put("date", DateUtil.getYearByTime(data.get(i).date));
+                    item.put("time", DateUtil.getWeekByTime(data.get(i).date));
+                    break;
+                case MONTH:
+                    item.put("date", DateUtil.getYearByTime(data.get(i).date));
+                    item.put("time", DateUtil.getMonthByTime(data.get(i).date));
+                    break;
+            }
+
+
             item.put("pt", "" + data.get(i).getPtStr());
             item.put("inr", "" + data.get(i).getInrStr());
             item.put("warfarin", "" + data.get(i).getWarfarinStr());
@@ -114,17 +162,45 @@ public class HistoryFragment extends android.support.v4.app.Fragment implements 
     {
         data = new ArrayList<>();
 
-        if (SystemInfo.isBluetooth)
+        switch(mode)
         {
-            DbUtil.loadExamHistory(data);
+            case RECENT:
+                DbUtil.loadExamHistoryWithLimit(data, 15);
+                break;
+            case WEEK:
+                DbUtil.loadExamHistoryByWeekWithLimit(data, 15);
+                break;
+            case MONTH:
+                DbUtil.loadExamHistoryByMonthWithLimit(data, 15);
+                break;
+            case ALL:
+                DbUtil.loadExamHistory(data);
+                break;
+            default:
+                DbUtil.loadExamHistoryWithLimit(data, 15);
+                break;
+        }
+    }
 
-        }
-        else
+    public void onClick(View v)
+    {
+        if (btRecent == v)
         {
-            DbUtil.cleanExamData();
-            DbUtil.insertExamHistorySample();
-            DbUtil.loadExamHistory(data);
+            mode = MODE.RECENT;
         }
+        else if(btWeek == v)
+        {
+            mode = MODE.WEEK;
+        }
+        else if (btMonth == v)
+        {
+            mode = MODE.MONTH;
+        }
+        else if (btAll == v)
+        {
+            mode = MODE.ALL;
+        }
+        refresh();
     }
 
     public void initChart()
@@ -166,7 +242,7 @@ public class HistoryFragment extends android.support.v4.app.Fragment implements 
 //        leftAxis.addLimitLine(ll2);
 //        leftAxis.setAxisMaxValue(5f);
 //        leftAxis.setAxisMinValue(0f);
-        leftAxis.setStartAtZero(false);
+        leftAxis.setStartAtZero(true);
         //leftAxis.setYOffset(20f);
         leftAxis.enableGridDashedLine(10f, 10f, 0f);
         leftAxis.setTextSize(20);
@@ -206,7 +282,8 @@ public class HistoryFragment extends android.support.v4.app.Fragment implements 
             return;
         for (int i = 0; i < data.size(); i++) {
 //        for (int i = data.size()-1; i >= 0; i--) {
-            xVals.add(data.get(i).getDateStr());
+            xVals.add(data.get(data.size()-i-1
+            ).getDateStr());
         }
 
         // pt
@@ -229,6 +306,7 @@ public class HistoryFragment extends android.support.v4.app.Fragment implements 
         ptSet.setCircleSize(6f);
         ptSet.setDrawCircleHole(false);
         ptSet.setValueTextSize(20f);
+        ptSet.setDrawValues(false);
         ptSet.setFillAlpha(65);
         ptSet.setFillColor(Color.BLACK);
 
@@ -253,6 +331,7 @@ public class HistoryFragment extends android.support.v4.app.Fragment implements 
         inrSet.setCircleSize(6f);
         inrSet.setDrawCircleHole(false);
         inrSet.setValueTextSize(20f);
+        inrSet.setDrawValues(false);
         inrSet.setFillAlpha(65);
         inrSet.setFillColor(Color.BLACK);
 
@@ -277,6 +356,7 @@ public class HistoryFragment extends android.support.v4.app.Fragment implements 
         warfarinSet.setCircleSize(6f);
         warfarinSet.setDrawCircleHole(false);
         warfarinSet.setValueTextSize(20f);
+        warfarinSet.setDrawValues(false);
         warfarinSet.setFillAlpha(65);
         warfarinSet.setFillColor(Color.BLACK);
 

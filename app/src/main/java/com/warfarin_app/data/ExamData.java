@@ -7,6 +7,7 @@ import com.warfarin_app.util.SystemInfo;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
@@ -32,7 +33,7 @@ public class ExamData {
 
         DateFormat shortDateFormat =
                 DateFormat.getDateInstance(
-                        DateFormat.SHORT, SystemInfo.getLocal());
+                        DateFormat.MEDIUM, SystemInfo.getLocal());
 
 
         Date d = new Date();
@@ -50,6 +51,15 @@ public class ExamData {
         Date d = new Date();
         d.setTime(date);
         return shortDateFormat.format(d);
+    }
+
+    public String getDbDateTimeStr()
+    {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(
+                "yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        Date d = new Date();
+        d.setTime(date);
+        return dateFormat.format(d);
     }
 
     public String getPtStr()
