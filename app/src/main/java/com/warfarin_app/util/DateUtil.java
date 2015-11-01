@@ -35,6 +35,7 @@ public class DateUtil {
 
         }catch (Exception e)
         {
+            Log.e("app", dateTime);
             Log.e("app", "exception", e);
         }
 
@@ -106,7 +107,7 @@ public class DateUtil {
         Date d = new Date();
         d.setTime(time);
         cal.setTime(d);
-        return (cal.get(Calendar.MONTH)+1) + "月";
+        return (cal.get(Calendar.MONTH)) + "月";
     }
 
     public static String getWeekByTime(long time)
@@ -119,5 +120,18 @@ public class DateUtil {
         return new DateFormatSymbols().getMonths()[month-1];
     }
 
+    public static String getDateByReduceMonth(int month)
+    {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.add(Calendar.MONTH, (-1)*month);
 
+        Date result = cal.getTime();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+
+        return formatter.format(result);
+
+    }
 }

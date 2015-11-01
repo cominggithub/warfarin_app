@@ -37,9 +37,10 @@ import java.util.HashMap;
 
 enum MODE
 {
-    RECENT,
-    WEEK,
-    MONTH,
+    RECENT_ONE_MONTH,
+    RECENT_THREE_MONTH,
+    RECENT_SIX_MONTH,
+    RECENT_ONE_YEAR,
     ALL
 }
 
@@ -52,9 +53,10 @@ public class HistoryFragment extends android.support.v4.app.Fragment implements 
     LineChart mChart;
     ArrayList<ExamData> data;
     MainActivity mainActivity;
-    Button btRecent;
-    Button btMonth;
-    Button btWeek;
+    Button btRecentOneMonth;
+    Button btRecentThreeMonth;
+    Button btRecentSixMonth;
+    Button btRecentOneYear;
     Button btAll;
 
     MODE mode;
@@ -64,7 +66,7 @@ public class HistoryFragment extends android.support.v4.app.Fragment implements 
 
         mainActivity = (MainActivity)activity;
         mainActivity.addExamDataListener(this);
-        mode = MODE.RECENT;
+        mode = MODE.RECENT_ONE_MONTH;
 
         if (!SystemInfo.isBluetooth)
         {
@@ -75,24 +77,25 @@ public class HistoryFragment extends android.support.v4.app.Fragment implements 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.d("app", "onCreateView");
         return inflater.inflate(R.layout.history, container, false);
     }
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         listview  = (ListView) this.getView().findViewById(R.id.history_lvExamHistoryList);
-        btRecent = (Button) this.getView().findViewById(R.id.history_btRecent);
-        btWeek = (Button) this.getView().findViewById(R.id.history_btWeek);
-        btMonth = (Button) this.getView().findViewById(R.id.history_btMonth);
+
+        btRecentOneMonth = (Button) this.getView().findViewById(R.id.history_btRecentOneM);
+        btRecentThreeMonth = (Button) this.getView().findViewById(R.id.history_btRecentThreeM);
+        btRecentSixMonth = (Button) this.getView().findViewById(R.id.history_btRecentSixM);
+        btRecentOneYear = (Button) this.getView().findViewById(R.id.history_btRecentOneY);
         btAll = (Button) this.getView().findViewById(R.id.history_btAll);
 
-        btRecent.setOnClickListener(this);
-        btWeek.setOnClickListener(this);
-        btMonth.setOnClickListener(this);
+        btRecentOneMonth.setOnClickListener(this);
+        btRecentThreeMonth.setOnClickListener(this);
+        btRecentSixMonth.setOnClickListener(this);
+        btRecentOneYear.setOnClickListener(this);
         btAll.setOnClickListener(this);
 
-        Log.d("app", "onActivityCreated");
         initChart();
         refresh();
     }
@@ -111,23 +114,25 @@ public class HistoryFragment extends android.support.v4.app.Fragment implements 
         for(int i=0; i<data.size(); i++){
             HashMap<String,String> item = new HashMap<String,String>();
 
-            switch(mode)
-            {
-                case RECENT:
-                case ALL:
-                    item.put("date", data.get(i).getDateStr());
-                    item.put("time", data.get(i).getTimeStr());
-                    break;
-                case WEEK:
-                    item.put("date", DateUtil.getYearByTime(data.get(i).date));
-                    item.put("time", DateUtil.getWeekByTime(data.get(i).date));
-                    break;
-                case MONTH:
-                    item.put("date", DateUtil.getYearByTime(data.get(i).date));
-                    item.put("time", DateUtil.getMonthByTime(data.get(i).date));
-                    break;
-            }
+//            switch(mode)
+//            {
+//                case RECENT:
+//                case ALL:
+//                    item.put("date", data.get(i).getDateStr());
+//                    item.put("time", data.get(i).getTimeStr());
+//                    break;
+//                case btRecentOneMonth:
+//                    item.put("date", DateUtil.getYearByTime(data.get(i).date));
+//                    item.put("time", DateUtil.getWeekByTime(data.get(i).date));
+//                    break;
+//                case MONTH:
+//                    item.put("date", DateUtil.getYearByTime(data.get(i).date));
+//                    item.put("time", DateUtil.getMonthByTime(data.get(i).date));
+//                    break;
+//            }
 
+            item.put("date", data.get(i).getDateStr());
+            item.put("time", data.get(i).getTimeStr());
 
             item.put("pt", "" + data.get(i).getPtStr());
             item.put("inr", "" + data.get(i).getInrStr());
@@ -145,7 +150,6 @@ public class HistoryFragment extends android.support.v4.app.Fragment implements 
         };
 
         SimpleAdapter adapter = new SimpleAdapter(
-//                getActivity().getBaseContext(),
                 mainActivity.getBaseContext(),
                 examDataList,
                 R.layout.exam_list_entry,
@@ -164,37 +168,41 @@ public class HistoryFragment extends android.support.v4.app.Fragment implements 
 
         switch(mode)
         {
-            case RECENT:
-                DbUtil.loadExamHistoryWithLimit(data, 15);
+            case RECENT_ONE_MONTH:
+                DbUtil.loadExamHistoryWithLimit(data, -1, DateUtil.getDateByReduceMonth(1));
                 break;
-            case WEEK:
-                DbUtil.loadExamHistoryByWeekWithLimit(data, 15);
+            case RECENT_THREE_MONTH:
+                DbUtil.loadExamHistoryWithLimit(data, -1, DateUtil.getDateByReduceMonth(3));
                 break;
-            case MONTH:
-                DbUtil.loadExamHistoryByMonthWithLimit(data, 15);
+            case RECENT_SIX_MONTH:
+                DbUtil.loadExamHistoryWithLimit(data, -1, DateUtil.getDateByReduceMonth(6));
+                break;
+            case RECENT_ONE_YEAR:
+                DbUtil.loadExamHistoryWithLimit(data, -1, DateUtil.getDateByReduceMonth(12));
                 break;
             case ALL:
                 DbUtil.loadExamHistory(data);
-                break;
-            default:
-                DbUtil.loadExamHistoryWithLimit(data, 15);
                 break;
         }
     }
 
     public void onClick(View v)
     {
-        if (btRecent == v)
+        if (btRecentOneMonth == v)
         {
-            mode = MODE.RECENT;
+            mode = MODE.RECENT_ONE_MONTH;
         }
-        else if(btWeek == v)
+        else if(btRecentThreeMonth == v)
         {
-            mode = MODE.WEEK;
+            mode = MODE.RECENT_THREE_MONTH;
         }
-        else if (btMonth == v)
+        else if (btRecentSixMonth == v)
         {
-            mode = MODE.MONTH;
+            mode = MODE.RECENT_SIX_MONTH;
+        }
+        else if (btRecentOneYear == v)
+        {
+            mode = MODE.RECENT_ONE_YEAR;
         }
         else if (btAll == v)
         {

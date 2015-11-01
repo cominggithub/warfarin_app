@@ -94,7 +94,7 @@ public class ExamFragment extends android.support.v4.app.Fragment implements Exa
         Log.d("app", "refresh exam fragment");
 
         ArrayList<ExamData> data = new ArrayList<>();
-        DbUtil.loadExamHistoryWithLimit(data, 2);
+        DbUtil.loadExamHistoryWithLimit(data, 2, null);
 
         if (data.size() == 2) {
             setData(data.get(0), data.get(1));

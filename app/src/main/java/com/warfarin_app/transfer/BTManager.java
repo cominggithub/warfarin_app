@@ -113,6 +113,12 @@ public class BTManager extends Thread {
         return instance;
     }
 
+    public static BTManager getNewInstance(MainActivity mainActivity)
+    {
+        instance = new BTManager(mainActivity);
+        return instance;
+    }
+
     public static BTManager getInstance()
     {
         return instance;
@@ -318,6 +324,11 @@ public class BTManager extends Thread {
             {
                 Log.e("bt", "exception", e);
             }
+        }
+
+        if (this.isAlive())
+        {
+            this.interrupt();
         }
 
         LogUtil.appendMsg("Stop Bluetooth Manager");

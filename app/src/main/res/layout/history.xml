@@ -15,23 +15,28 @@ android:background="#ffc3ffc6">
         android:background="#ffc3ffc6"
         android:gravity="center_horizontal">
     <Button
-        android:layout_width="150dp"
+        android:layout_width="120dp"
         android:layout_height="wrap_content"
-        android:text="最近"
-        android:id="@+id/history_btRecent" />
+        android:text="最近一個月"
+        android:id="@+id/history_btRecentOneM" />
     <Button
-            android:layout_width="150dp"
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
-            android:text="週"
-        android:id="@+id/history_btWeek" />
+            android:text="最近三個月"
+        android:id="@+id/history_btRecentThreeM" />
 
     <Button
-            android:layout_width="150dp"
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
-            android:text="月"
-        android:id="@+id/history_btMonth" />
+            android:text="最近六個月"
+        android:id="@+id/history_btRecentSixM" />
     <Button
-            android:layout_width="150dp"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:text="最近一年"
+            android:id="@+id/history_btRecentOneY" />
+    <Button
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
             android:text="全部"
         android:id="@+id/history_btAll" />

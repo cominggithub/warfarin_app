@@ -31,36 +31,6 @@ public class BTUtil {
         mainActivity = activity;
     }
 
-//    public static BluetoothDevice scan_device()
-//    {
-//        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-//
-//        Log.d("bt", "scan paired Bluetooth device \"" + deviceAddress + "\"");
-//        LogUtil.appendMsg("scan paired Bluetooth device \"" + deviceAddress + "\"");
-//                requestBluetoothPermission();
-//
-//        Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
-//        if (pairedDevices.size() > 0) {
-//            // Loop through paired devices
-//            for (BluetoothDevice device : pairedDevices) {
-//                Log.d("bt", "found paired Bluetooth device " + device.getName() + ", " + device.getAddress());
-//                LogUtil.appendMsg("found paired Bluetooth device " + device.getName() + ", " + device.getAddress());
-//                if (device.getAddress().equals(deviceAddress))
-//                {
-//                    LogUtil.appendMsg("use Bluetooth device " + device.getName() + ", " + device.getAddress());
-//                    Log.d("bt", "use paired Bluetooth device " + device.getName() + ", " + device.getAddress());
-//                    setDevice(device);
-//                    return device;
-//                }
-//            }
-//        }
-//        else
-//        {
-//            LogUtil.appendMsg("no Bluetooth device found, please pair Bluetooth device before using this APP");
-//        }
-//
-//        return null;
-//    }
 
     public static void requestBluetoothPermission()
     {

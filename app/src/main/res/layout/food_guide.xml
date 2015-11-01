@@ -4,6 +4,12 @@
     android:layout_height="match_parent"
     android:background="#ffc3ffc6">
 
+    <WebView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/food_guide_webview"
+        android:layout_gravity="right" />
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -21,12 +27,11 @@
 
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:src="@mipmap/food_guide"
         android:scaleType="centerCrop"
         android:layout_gravity="center" />
-
 
 
 </LinearLayout>

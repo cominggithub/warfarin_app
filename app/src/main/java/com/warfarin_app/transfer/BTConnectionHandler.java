@@ -108,6 +108,10 @@ public class BTConnectionHandler extends Thread {
         } catch (Exception e) {
             // Unable to connect; close the socket and get out
             Log.e("bt", "exception", e);
+            if (e.getMessage().contains("Connection is not created (failed or aborted)"))
+            {
+                LogUtil.appendMsg("無法連線建立，請重新開機");
+            }
         }
 
         stopRunning();

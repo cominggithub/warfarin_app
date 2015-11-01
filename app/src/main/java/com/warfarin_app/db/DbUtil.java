@@ -167,7 +167,6 @@ public class DbUtil {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-//        values.put(ExamEntry.COLUMN_NAME_DATE, d.date);
 
         values.put(ExamEntry.COLUMN_NAME_DATE, d.getDbDateTimeStr());
         values.put(ExamEntry.COLUMN_NAME_WEEK, DateUtil.getWeek(d.date));
@@ -266,7 +265,7 @@ public class DbUtil {
     public static boolean loadExamHistory(ArrayList<ExamData> list)
     {
 
-        return loadExamHistoryWithLimit(list, -1);
+        return loadExamHistoryWithLimit(list, -1, null);
     }
 
     public static boolean loadExamHistoryByWeekWithLimit(ArrayList<ExamData> list, int limitCount)
@@ -407,6 +406,9 @@ public class DbUtil {
             ed.date = DateUtil.getTimeByYearMonth(
                     cursor.getString(cursor.getColumnIndexOrThrow("year")),
                     cursor.getString(cursor.getColumnIndexOrThrow("month")));
+
+//            Log.d("app", "month: " + cursor.getString(cursor.getColumnIndexOrThrow("month")));
+//            Log.d("app", ed.toString());
             list.add(ed);
 
             cursor.moveToNext();
@@ -415,11 +417,8 @@ public class DbUtil {
         return true;
     }
 
-    public static boolean loadExamHistoryWithLimit(ArrayList<ExamData> list, int limitCount)
+    public static boolean loadExamHistoryWithLimit(ArrayList<ExamData> list, int limitCount, String startDate)
     {
-        int result;
-        boolean gender;
-        boolean isMarfarin;
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         Cursor cursor;
 
@@ -436,25 +435,42 @@ public class DbUtil {
                 ExamEntry._ID + " DESC";
         String limit = "" + limitCount;
 
+        String whereClause = null;
+
+        if (startDate != null)
+        {
+            Log.d("app", startDate.toString());
+//            whereClause = "date("+ExamEntry.COLUMN_NAME_DATE+") " + " >= '2015/10/1'";
+//            whereClause = "date("+ExamEntry.COLUMN_NAME_DATE+") " + " >= '2015/10/01'";
+//            whereClause = ExamEntry.COLUMN_NAME_DATE + " >= date('2015/10/01 00:00:00')";
+//            whereClause = "date("+ExamEntry.COLUMN_NAME_DATE+") " + " >= date('2012/10/01 00:00:00')";
+//            whereClause = "date(date) >= date('2014/10/01 00:00:00')";
+//            whereClause = "date >= '2014/10/01 00:00:00'"; // get
+//            whereClause = "date >= date('2014/10/01 00:00:00')";
+//            whereClause = "date(date) >= date('2015-10-01')";
+            whereClause = "strftime('%Y/%m/%d', date) >= '" + startDate + "'";
+        }
+
 
         // no limit
         if (limitCount == -1) {
-            cursor =db.query(
+            cursor = db.query(
                     ExamEntry.TABLE_NAME,  // The table to query
                     projection,                               // The columns to return
-                    null,
+                    whereClause,
                     null,                                       // The values for the WHERE clause
                     null,                                     // don't group the rows
                     null,                                     // don't filter by row groups
                     sortOrder                                 // The sort order,
             );
+
         }
         else
         {
             cursor =db.query(
                     ExamEntry.TABLE_NAME,  // The table to query
                     projection,                               // The columns to return
-                    null,
+                    whereClause,
                     null,                                       // The values for the WHERE clause
                     null,                                     // don't group the rows
                     null,                                     // don't filter by row groups
@@ -495,13 +511,11 @@ public class DbUtil {
 
         ContentValues values = new ContentValues();
 
-        values.put(ExamEntry.COLUMN_NAME_DATE, d.date);
-        values.put(ExamEntry.COLUMN_NAME_PT, d.pt);
-        values.put(ExamEntry.COLUMN_NAME_INR, d.inr);
+//        values.put(ExamEntry.COLUMN_NAME_DATE, d.date);
+//        values.put(ExamEntry.COLUMN_NAME_PT, d.pt);
+//        values.put(ExamEntry.COLUMN_NAME_INR, d.inr);
         values.put(ExamEntry.COLUMN_NAME_MARFARIN, d.warfarin);
 
-
-//        db.insert(ExamEntry.TABLE_NAME, null, values);
         db.update(ExamEntry.TABLE_NAME, values, ExamEntry._ID + "=" + d.id, null);
     }
 
@@ -517,7 +531,7 @@ public class DbUtil {
         int week;
 
 
-        for(year=2013; year<2016; year++) {
+        for(year=2014; year<2016; year++) {
             for (month = 1; month < 13; month++) {
                 for (day = 1; day < 29; day++) {
 
@@ -540,7 +554,7 @@ public class DbUtil {
         }
 
         ArrayList<ExamData> list = new ArrayList<>();
-        loadExamHistoryByWeekWithLimit(list, 60);
+//        loadExamHistoryByWeekWithLimit(list, 60);
 //        loadExamHistoryByMonthWithLimit(list, 30);
     }
 

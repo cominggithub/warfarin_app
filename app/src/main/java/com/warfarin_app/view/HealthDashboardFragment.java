@@ -92,6 +92,7 @@ public class HealthDashboardFragment extends android.support.v4.app.Fragment imp
         normalMargin.right = 0;
         normalMargin.bottom = 0;
         setIndicatorNormal();
+        refresh();
     }
     @Override
     public void onResume()
@@ -159,7 +160,7 @@ public class HealthDashboardFragment extends android.support.v4.app.Fragment imp
     public void loadExamData()
     {
         ArrayList<ExamData> data =new ArrayList<ExamData>();
-        DbUtil.loadExamHistoryWithLimit(data, 1);
+        DbUtil.loadExamHistoryWithLimit(data, 1, null);
 
         if(data.size() > 0)
         {

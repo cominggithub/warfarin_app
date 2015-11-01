@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.internal.view.ContextThemeWrapper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,28 +50,23 @@ public class PatientFragment extends android.support.v4.app.Fragment implements 
         super.onAttach(activity);
 
         mainActivity = (MainActivity)activity;
-        Log.d("app", "onAttach");
-//        value = mainActivity.getPersonalProfileData();
+//        Log.d("app", "onAttach");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-//        View v;
-//        v = inflater.inflate(R.layout.patient, container, false);
-
 
         newFragment = new DatePickerFragment();
         newFragment.addDateSelectedListener(this);
-        Log.d("app", "onCreateView");
+//        Log.d("app", "onCreateView");
         return inflater.inflate(R.layout.patient, container, false);
     }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-//        TextView txtResult = (TextView) this.getView().findViewById(R.id.textView1);
-//        txtResult.setText(value);
 
-        Log.d("app", "onActivityCreated");
+//        Log.d("app", "onActivityCreated");
         btOK = (Button) this.getView().findViewById(R.id.patient_btPatientOk);
         btOK.setOnClickListener(this);
 

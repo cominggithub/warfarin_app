@@ -20,7 +20,6 @@ import com.warfarin_app.db.DbUtil;
 import com.warfarin_app.transfer.BTManager;
 import com.warfarin_app.transfer.BTUtil;
 import com.warfarin_app.transfer.ExamDataListener;
-import com.warfarin_app.util.DateUtil;
 import com.warfarin_app.util.SystemInfo;
 
 public class MainActivity extends FragmentActivity {
@@ -36,7 +35,7 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.d("app", "MaiActivity onCreate");
+//        Log.d("app", "MaiActivity onCreate");
         setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
@@ -118,7 +117,7 @@ public class MainActivity extends FragmentActivity {
         int width = size.x;
         int height = size.y;
 
-        Log.d("app", String.format("screen %d x %d\n", width, height));
+//        Log.d("app", String.format("screen %d x %d\n", width, height));
 
         DisplayMetrics outMetrics = new DisplayMetrics();
         display.getMetrics(outMetrics);
@@ -128,10 +127,10 @@ public class MainActivity extends FragmentActivity {
         float dpWidth  = outMetrics.widthPixels / density;
 
 
-        Log.d("app", String.format("screen dp %.0f x %.0f\n", dpWidth, dpHeight));
-        Log.d("app", String.format("screen density %.0f\n", density));
-
-        Log.d("app", Build.FINGERPRINT);
+//        Log.d("app", String.format("screen dp %.0f x %.0f\n", dpWidth, dpHeight));
+//        Log.d("app", String.format("screen density %.0f\n", density));
+//
+//        Log.d("app", Build.FINGERPRINT);
         Build.FINGERPRINT.startsWith("generic");
 
     }
@@ -179,11 +178,7 @@ public class MainActivity extends FragmentActivity {
         patient.setBlueDevName("尚未設定");
 
         DbUtil.init(context);
-        DbUtil.cleanExamData();
-        DbUtil.cleanLogData();
         DbUtil.loadPatient(patient);
-
-        DateUtil.dumpWeek();
     }
 
     public void initBt()
@@ -198,11 +193,10 @@ public class MainActivity extends FragmentActivity {
 
             if (btManager == null)
             {
-                btManager = BTManager.getInstance(this);
+                btManager = BTManager.getNewInstance(this);
             }
 
             BTManager.setDeviceByAddress(patient.getBlueDevAddress());
-
             if (!btManager.isRunning()) {
                 btManager.start();
             }
@@ -223,6 +217,7 @@ public class MainActivity extends FragmentActivity {
         super.onWindowFocusChanged(hasFocus);
     }
 
+
     @Override
     public void onDestroy()
     {
@@ -230,6 +225,7 @@ public class MainActivity extends FragmentActivity {
         if (SystemInfo.isBluetooth) {
             if (btManager != null && btManager.isRunning() == true) {
                 btManager.close();
+                btManager = null;
             }
             BTUtil.close();
         }
